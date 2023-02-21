@@ -16,19 +16,19 @@ public class Location {
     };
 
     private static Item LOCATION_ITEMS[][] = {
-        {Item.GOLD, Item.SHIELD},
-        {Item.GOLD, Item.KEY},
-        {Item.GOLD, Item.SHIELD},
-        {Item.GOLD, Item.KEY},
-        {Item.GOLD, Item.SHIELD}
+        {Item.BEETROOT, Item.CARROT},
+        {Item.BEETROOT, Item.CARROT},
+        {Item.BEETROOT, Item.CARROT},
+        {Item.BEETROOT, Item.CARROT},
+        {Item.BEETROOT, Item.CARROT}
     };
 
     private static Weapon LOCATION_WEAPONS[][] = {
-        {Weapon.SWORD, Weapon.AK47},
-        {Weapon.SWORD, Weapon.AK47},
-        {Weapon.SWORD, Weapon.AK47},
-        {Weapon.SWORD, Weapon.AK47},
-        {Weapon.SWORD, Weapon.AK47}
+        {Weapon.AK47, Weapon.AR15},
+        {Weapon.AXE, Weapon.BATTON},
+        {Weapon.C4, Weapon.CROSSBOW},
+        {Weapon.FLAMETHROWER, Weapon.JAVELIN},
+        {Weapon.GLOCK, Weapon.SWORD}
     };
 
     private String name, description;
@@ -147,5 +147,9 @@ public class Location {
     
     public Dictionary<String, GameCharacterable> getEnemies() {
     	return this.enemies;
+    }
+    
+    public Dictionary<String, Item> getItems() {
+    	return this.items;
     }
 }

@@ -5,7 +5,6 @@ import jhealy.aicme4j.net.Output;
 public class Imp extends GameCharacterNN implements GameCharacterable {
     private static String NN_PATH = "./resources/neural/imp.dat";
 
-    private static final String COLOUR_NAME = ConsoleColour.BLUE + "Imp" + ConsoleColour.RESET;
     private static final String NAME = "Imp";
 
     private static int hiddenLayerSizes[] = {12};
@@ -18,7 +17,7 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
     };
     
     public Imp(Location location) {
-        super(location, NAME, COLOUR_NAME, hiddenLayerSizes);
+        super(location, NAME, ConsoleColour.BLUE, hiddenLayerSizes);
         this.setTrainingData(this.getData(), expected);
     }
 
@@ -36,16 +35,13 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
             weapon.getDefencePoints()
         };
 
-        this.causeDamage(weapon.getAttackPoints());
+        this.causeDamage(weapon.getAttackPoints(), opponent);
+        
+        if (this.getHealth() <= 0) {
+        	opponent.setItem(Item.KEY);
+        }
 
-        int index = 0;
-		try {
-			index = (int) this.getNeuralNetwork().process(input, Output.LABEL_INDEX);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+        int index = (int) this.process(input, Output.LABEL_INDEX);
         double damage = attackValues[index];
     }
 }

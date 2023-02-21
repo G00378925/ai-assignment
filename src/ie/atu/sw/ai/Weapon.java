@@ -1,50 +1,42 @@
 package ie.atu.sw.ai;
 
 public enum Weapon {
-    SWORD(0, 0, 0),
-    AK47(1, 0, 0),
-    AXE(2, 0, 0),
-    CROSSBOW(3, 0, 0);
+    AK47("AK47", 100, 0),
+    AR15("AR15", 80, 0),
+    AXE("Axe", 0, 0),
+    BATTON("Batton", 10, 50),
+    CROSSBOW("Crossbow", 40, 0),
+    C4("C4", 100, 0),
+    FLAMETHROWER("FlameThrower", 60, 0),
+    GLOCK("Glock", 40, 0),
+    JAVELIN("Javelin", 40, 0),
+    SWORD("Sword", 40, 0);
     
-    private int weaponID, attackPoints, defencePoints;
+    public static Weapon[] getWeapons() {
+        return new Weapon[] {
+            AK47, AR15, AXE, BATTON, CROSSBOW, C4,
+            FLAMETHROWER, GLOCK, JAVELIN, SWORD
+        };
+    }
 
-    private Weapon(int weaponID, int attackPoints, int defencePoints) {
-        this.weaponID = weaponID;
+	private String name;
+    private double attackPoints, defencePoints;
+
+    private Weapon(String name, int attackPoints, int defencePoints) {
+        this.name = name;
         this.attackPoints = attackPoints;
         this.defencePoints = defencePoints;
     }
 
-    public int getWeaponID() {
-        return weaponID;
+    public String getName() {
+        return this.name;
     }
 
-    public int getAttackPoints() {
-        return attackPoints;
+    public double getAttackPoints() {
+        return this.attackPoints;
     }
 
-    public int getDefencePoints() {
-        return defencePoints;
-    }
-
-    public String toString() {
-        return switch (this.weaponID) {
-            case 0 -> "Sword";
-            case 1 -> "AK47";
-            default -> "Undefined";
-        };
-    }
-
-    public static Weapon[] getWeapons() {
-        return new Weapon[] {
-            SWORD, AK47
-        };
-    }
-
-    public static Weapon getWeapon(int weaponID) {
-        return switch (weaponID) {
-            case 0 -> SWORD;
-            case 1 -> AK47;
-            default -> null;
-        };
+    public double getDefencePoints() {
+        return this.defencePoints;
     }
 }

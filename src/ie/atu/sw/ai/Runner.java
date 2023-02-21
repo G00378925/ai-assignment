@@ -70,7 +70,7 @@ public class Runner {
         this.spawnCharacters(forceNNRebuild);
 
         Player player = new Player(location, INITIAL_HEALTH);
-        (new Menu(this.locations)).showMenuHeader().go(player);
+        (new Menu()).showMenuHeader().go(player);
     }
     
     public static void main(String[] args) throws Exception {

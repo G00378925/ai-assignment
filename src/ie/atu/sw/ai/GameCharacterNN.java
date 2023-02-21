@@ -13,8 +13,8 @@ public abstract class GameCharacterNN extends GameCharacter {
 
     private NeuralNetwork nn;
     
-    public GameCharacterNN(Location location, String name, String colourName, int[] hiddenLayerSizes) {
-        super(location, name, colourName);
+    public GameCharacterNN(Location location, String name, ConsoleColour consoleColour, int[] hiddenLayerSizes) {
+        super(location, name, consoleColour);
         this.hiddenLayerSizes = hiddenLayerSizes;
     }
 
@@ -43,6 +43,15 @@ public abstract class GameCharacterNN extends GameCharacter {
                 .save(path)
                 .build();
         }
+    }
+    
+    public double process(double[] input, Output output) {
+        try {
+            return this.nn.process(input, output);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return 0;
     }
 
     public abstract void loadNeuralNetwork(boolean forceNNRebuild) throws Exception;

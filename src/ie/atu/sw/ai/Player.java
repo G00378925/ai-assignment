@@ -7,7 +7,7 @@ import java.util.Collections;
 public class Player {
     private Location currentLocation;
     private Item item;
-    private Weapon weapon;
+    private Weapon weapon = Weapon.SWORD;
 
     private double health = 100;
 
@@ -16,32 +16,13 @@ public class Player {
         this.health = health;
     }
     
-    public Item getItem() {
-    	return this.item;
-    }
-    
     public void setItem(Item item) {
+    	if (this.item == Item.KEY) return;
     	this.item = item;
-    }
-
-    public Weapon getWeapon() {
-        return weapon;
-    }
-
-    public void setWeapon(Weapon weapon) {
-        this.weapon = weapon;
-    }
-
-    public Location getCurrentLocation() {
-        return currentLocation;
     }
 
     public Collection<GameCharacterable> getEnemies() {
     	return Collections.list(currentLocation.getEnemies().elements());
-    }
-
-    public void setCurrentLocation(Location currentLocation) {
-        this.currentLocation = currentLocation;
     }
 
     public double look() {
@@ -60,9 +41,13 @@ public class Player {
         return 0;
     }
 
-    public double get() {
-        System.out.println("You get something.");
-        return 0;
+    public void get(String itemName) {
+        Item item = currentLocation.getItems().get(itemName);
+        
+        if (item != null) {
+        	currentLocation.getItems().remove(itemName);
+        	setItem(item);
+        }
     }
 
     public void fight(String enemyName) {
@@ -82,9 +67,8 @@ public class Player {
         }
     }
 
-    public double eat() {
+    public void eat(String itemName) {
         System.out.println("You eat something.");
-        return 0;
     }
 
     public double tell(String enemyName) {
@@ -104,19 +88,26 @@ public class Player {
     }
     
     public void move(String direction) {
+    	Location newLocation = currentLocation.getEdges().get(direction);
+    	if (newLocation.isExit()) {
+            if (this.item == Item.KEY) {
+            	System.out.println("You won.");
+            	System.exit(0);
+            } else {
+            	System.err.println("You need the key to unlock.");
+            	return;
+            }
+    	}
+
     	this.currentLocation.togglePlayerHere();
-        this.currentLocation = currentLocation.getEdges().get(direction);
+        this.currentLocation = newLocation;
         this.currentLocation.togglePlayerHere();
         
-        if (currentLocation.isExit()) {
-        	System.out.println("You won.");
-        	System.exit(0);
-        } else {
-        	System.out.printf("You have now entered the %s.\n", currentLocation.getName());
-        }
+        System.out.printf("You have now entered the %s.\n", currentLocation.getName());
     }
 
     public void causeDamage(double damage) {
+    	System.out.printf("Player has taken %.2f", damage);
         this.health -= damage;
     }
 }

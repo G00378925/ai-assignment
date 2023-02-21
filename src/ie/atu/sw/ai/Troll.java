@@ -3,7 +3,6 @@ package ie.atu.sw.ai;
 public class Troll extends GameCharacterNN implements GameCharacterable {
     private static String NN_PATH = "./resources/neural/troll.dat";
 
-    private static final String COLOUR_NAME = ConsoleColour.BLUE_BRIGHT + "Troll" + ConsoleColour.RESET;
     private static final String NAME = "Troll";
     private static int[] hiddenLayerSizes = {12, 6};
 
@@ -13,7 +12,7 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     };
 
     public Troll(Location location) {
-        super(location, NAME, COLOUR_NAME, hiddenLayerSizes);
+        super(location, NAME, ConsoleColour.BLUE_BRIGHT, hiddenLayerSizes);
         this.setTrainingData(this.getData(), expected);
     }
 
@@ -22,6 +21,6 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     } 
     
     public void fight(Weapon weapon, Player opponent) {
-        this.causeDamage(weapon.getAttackPoints());
+        this.causeDamage(weapon.getAttackPoints(), opponent);
     }
 }

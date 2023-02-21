@@ -3,12 +3,7 @@ package ie.atu.sw.ai;
 import java.util.*;
 
 public class Menu {
-    private static final Scanner console = new Scanner(System.in);
-    private final Collection<Location> locations;
-
-    public Menu(Collection<Location> locations) {
-        this.locations = locations;
-    }
+    private final Scanner console = new Scanner(System.in);
 
     public Menu showMenuHeader() {
         System.out.println(ConsoleColour.RED);
@@ -38,11 +33,6 @@ public class Menu {
             for (int i = 0; i < input.length; i++)
             	input[i] = input[i].toUpperCase();
 
-            /*
-             * The locations can be created as an instance of a class Location or something
-             * similar. Items can be added to a Collection associated with each location. The
-             * game characters can keep an inventory using an instance of Collection.  
-             */
             String command = input[0];
             if (command.length() == 0) continue;
             
@@ -55,7 +45,12 @@ public class Menu {
                     break;
                 }
                 case "GET": {
-                	player.get();
+                	if (input.length < 2) {
+                		System.err.println("GET must be followed with the items name.");
+                		break;
+                	}
+                	
+                	player.get(input[1]);
                 	break;
                 }
                 case "FIGHT": {
@@ -68,7 +63,12 @@ public class Menu {
                     break;
                 }
                 case "EAT": {
-                    player.eat();
+                	if (input.length < 2) {
+                		System.err.println("EAT must be followed with the items name.");
+                		break;
+                	}
+                	
+                    player.eat(input[1]);
                     break;
                 }
                 case "TELL": {

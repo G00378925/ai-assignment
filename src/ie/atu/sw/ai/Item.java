@@ -1,33 +1,25 @@
 package ie.atu.sw.ai;
 
 public enum Item {
-    GOLD(0), SHIELD(1), KEY(2);
-
-    private int itemID;
+    KEY("Key", false, 0),
+    BEETROOT("Beetroot", true, 0),
+    CARROT("Carrot", true, 0);
+	
+	private String name;
+    private boolean edible;
+    private float value;
     
-    private Item(int itemID) {
-        this.itemID = itemID;
-    }
-
-    public int getItemID() {
-        return this.itemID;
-    }
-
-    public static Item getItem(int itemID) {
-        return switch (itemID) {
-            case 0 -> GOLD;
-            case 1 -> SHIELD;
-            case 2 -> KEY;
-            default -> null;
-        };
+    private Item(String name, boolean edible, float value) {
+    	this.name = name;
+        this.edible = edible;
+        this.value = value;
     }
     
-    public String toString() {
-        return switch (this.itemID) {
-            case 0 -> "Gold";
-            case 1 -> "Shield";
-            case 2 -> "Key";
-            default -> "Undefined";
-        };
+    public String getName() {
+    	return this.name;
+    }
+    
+    public boolean isEdible() {
+    	return this.edible;
     }
 }
