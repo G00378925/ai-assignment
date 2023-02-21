@@ -1,21 +1,13 @@
 package ie.atu.sw.ai;
 
 public class Dragon extends GameCharacterFL implements GameCharacterable {
-    // Fuzzy Logic
+    private static final String COLOUR_NAME = ConsoleColour.RED + "Dragon" + ConsoleColour.RESET;
+    private static final String NAME = "Dragon";
 
     public Dragon(Location location) {
-        super(location);
+        super(location, NAME, COLOUR_NAME);
     }
     
-    public float fight(Weapon weapon, Player opponent) {
-		    return 0;
-    }
-
-    public String getAIType() {
-        return "FL";
-    }
-
-    public String toString() {
-        return ConsoleColour.RED + "Dragon" + ConsoleColour.RESET;
+    public void fight(Weapon weapon, Player opponent) {
     }
 }

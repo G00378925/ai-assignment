@@ -1,40 +1,71 @@
 package ie.atu.sw.ai;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public class Location {
     private static String LOCATION_NAMES[] = {
-        "Cave", "Dessert", "Volcano"
+        "Cave", "Dessert", "Volcano", "Castle", "Laboratory"
     };
 
     private static String LOCATION_DESCRIPTIONS[] = {
-        "Cave filled with bats",
-        "Dessert filled with sand",
-        "Volcano filled with lava"
+        "Cave filled with blood thirsty bats.",
+        "Dry dessert with nobody for kilometers.",
+        "Volcano filled with bubbling lava.",
+        "Cold castle filled with ghosts.",
+        "Laboratory with leaking boiling flasks."
     };
 
-    private static int LOCATION_ITEMS[][] = {
-        {0, 0},
-        {0, 0}
+    private static Item LOCATION_ITEMS[][] = {
+        {Item.GOLD, Item.SHIELD},
+        {Item.GOLD, Item.KEY},
+        {Item.GOLD, Item.SHIELD},
+        {Item.GOLD, Item.KEY},
+        {Item.GOLD, Item.SHIELD}
     };
 
-    private static int LOCATION_WEAPONS[][] = {
-        {0, 0},
-        {0, 0}
+    private static Weapon LOCATION_WEAPONS[][] = {
+        {Weapon.SWORD, Weapon.AK47},
+        {Weapon.SWORD, Weapon.AK47},
+        {Weapon.SWORD, Weapon.AK47},
+        {Weapon.SWORD, Weapon.AK47},
+        {Weapon.SWORD, Weapon.AK47}
     };
 
     private String name, description;
     private HashMap<String, Location> edges;
+    private boolean isExit, playerHere;
 
-    private Collection<Item> items;
-    private Collection<Weapon> weapons;
+    private Dictionary<String, Item> items = new Hashtable<String, Item>();
+    private Dictionary<String, Weapon> weapons = new Hashtable<String, Weapon>();
+    private Dictionary<String, GameCharacterable> enemies = new Hashtable<String, GameCharacterable>();
 
-    private boolean isExit;
+    public HashMap<String, Location> getEdges() {
+        return this.edges;
+    }
 
-    public void addEdge(Location location, String direction) {
+    public void setExit() {
+        this.isExit = true;
+    }
+
+    public boolean isExit() {
+        return this.isExit;
+    }
+    
+    public void togglePlayerHere() {
+    	this.playerHere = !this.playerHere;
+    }
+    
+    public boolean isPlayerHere() {
+    	return this.playerHere;
+    }
+
+    public void addEdge(String direction, Location location) {
         this.edges.put(direction, location);
+    }
+
+    public Location getRandomEdge() {
+    	int randomEdgeIndex = new Random().nextInt(this.edges.size());
+        return (Location) this.edges.values().toArray()[randomEdgeIndex];
     }
 
     public static String reverseLocation(String locationStr) {
@@ -51,12 +82,16 @@ public class Location {
         };
     }
 
-    public static Location setupLocationGraph(int currentDepth, int maxDepth, Collection<Location> locations, Location currentLocation, String direction, Location previousLocation) {
+    private static Location setupLocationGraph(int currentDepth, int maxDepth,
+            Collection<Location> locations, String direction, Location previousLocation) {
         Location newLocation = new Location();
         locations.add(newLocation);
         
-        if (currentDepth < maxDepth)
+        if (currentDepth > maxDepth) {
+            newLocation.setExit();
+            newLocation.addEdge(reverseLocation(direction), previousLocation);
             return newLocation;
+        }
         
         for (int i = 0; i < 4; i++) {
             String newDirection = switch (i) {
@@ -67,16 +102,23 @@ public class Location {
                 default -> null;
             };
             
-            if (newDirection == direction)
-                continue;
-            
-            Location newEdgeLocation = setupLocationGraph(currentDepth + 1, maxDepth, locations, newLocation, newDirection, currentLocation);
-            currentLocation.addEdge(newEdgeLocation, newDirection);
+            if (direction != null) {
+                if (newDirection.equals(reverseLocation(direction)))
+                    continue;
+            }
+           
+            Location newNewLocation = setupLocationGraph(currentDepth + 1, maxDepth, locations, newDirection, newLocation);
+            newLocation.addEdge(newDirection.toUpperCase(), newNewLocation);
         }
-
-        currentLocation.addEdge(previousLocation, reverseLocation(direction));
+        
+        if (previousLocation != null)
+            newLocation.addEdge(reverseLocation(direction).toUpperCase(), previousLocation);
         
         return newLocation;
+    }
+    
+    public static Location setupLocationGraph(int maxDepth, Collection<Location> locations) {
+    	return Location.setupLocationGraph(0, maxDepth, locations, null, null);
     }
     
     public Location() {
@@ -85,9 +127,25 @@ public class Location {
         int randomLocationIndex = new Random().nextInt(LOCATION_NAMES.length);
         this.name = LOCATION_NAMES[randomLocationIndex];
         this.description = LOCATION_DESCRIPTIONS[randomLocationIndex];
+
+        for (Item item : LOCATION_ITEMS[randomLocationIndex])
+            this.items.put(item.toString(), item);
+
+        for (Weapon weapon : LOCATION_WEAPONS[randomLocationIndex])
+        	this.weapons.put(weapon.toString(), weapon);
+        
+        this.playerHere = false;
     }
 
     public String getDescription() {
         return this.description;
+    }
+    
+    public String getName() {
+    	return this.name;
+    }
+    
+    public Dictionary<String, GameCharacterable> getEnemies() {
+    	return this.enemies;
     }
 }

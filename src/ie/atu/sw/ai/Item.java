@@ -1,21 +1,33 @@
 package ie.atu.sw.ai;
 
 public enum Item {
-    SWORD, SHIELD, HEALTH, GOLD, KEY, NONE;
-	
-	/*
-	private 
+    GOLD(0), SHIELD(1), KEY(2);
 
-    public setItem(Item item) {
-        this.item = item;
+    private int itemID;
+    
+    private Item(int itemID) {
+        this.itemID = itemID;
     }
 
-    public Item getItem() {
-        return item;
+    public int getItemID() {
+        return this.itemID;
     }
 
+    public static Item getItem(int itemID) {
+        return switch (itemID) {
+            case 0 -> GOLD;
+            case 1 -> SHIELD;
+            case 2 -> KEY;
+            default -> null;
+        };
+    }
+    
     public String toString() {
-        return item;
+        return switch (this.itemID) {
+            case 0 -> "Gold";
+            case 1 -> "Shield";
+            case 2 -> "Key";
+            default -> "Undefined";
+        };
     }
-    */
 }

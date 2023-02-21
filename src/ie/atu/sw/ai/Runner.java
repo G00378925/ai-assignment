@@ -1,50 +1,53 @@
 package ie.atu.sw.ai;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class Runner {
-    private static final int MAX_DEPTH = 3, MAX_NUM_OF_CHARACTERS = 2;
+    private static final int MAX_DEPTH = 2, MAX_NUM_OF_CHARACTERS = 40;
+    private static final double INITIAL_HEALTH = 100.0;
 
     private Collection<GameCharacterable> characters;
     private Collection<Location> locations;
     
+    private ExecutorService pool;
+    
     public Runner() {
-    	this.characters = new ArrayList<GameCharacterable>();
-    	this.locations = new ArrayList<Location>();
+        this.characters = new ArrayList<GameCharacterable>();
+        this.locations = new ArrayList<Location>();
+        
+        this.pool = Executors.newFixedThreadPool(MAX_NUM_OF_CHARACTERS);
     }
 
     private void spawnCharacters(boolean forceNNRebuild) throws Exception {
-        int randomLocationIndex = new Random().nextInt(this.locations.size());
-        Location randomLocation = (Location) this.locations.toArray()[randomLocationIndex];
-
+        // Pick a random character to spawn in and add it to the characters array.
         for (int i = 0; i < MAX_NUM_OF_CHARACTERS; i++) {
-            GameCharacterable character = switch (new Random().nextInt(3)) {
-                case 0 -> new Goblin(randomLocation);
-                case 1 -> new Imp(randomLocation);
-                case 2 -> new Dragon(randomLocation);
-                default -> null;
-            };
+            do {
+                int randomLocationIndex = new Random().nextInt(this.locations.size());
+                Location randomLocation = (Location) this.locations.toArray()[randomLocationIndex];
 
-            characters.add(character);
+                GameCharacterable character = switch (new Random().nextInt(3)) {
+                    case 0 -> new Goblin(randomLocation);
+                    case 1 -> new Imp(randomLocation);
+                    case 2 -> new Dragon(randomLocation);
+                    default -> null;
+                };
+                
+                if (randomLocation.getEnemies().get(character.toString()) != null)
+                    continue;
+        
+                characters.add(character);
+                randomLocation.getEnemies().put(character.toString(), character);
+            } while (false);
         }
 
         for (GameCharacterable character : this.characters) {
             if (character.getAIType() == "NN")
                 ((GameCharacterNN) character).loadNeuralNetwork(forceNNRebuild);
-                
-
-            //    ((GameCharacterNN) character).loadNeuralNetwork(forceNNRebuild);
-            //else if (character.getAIType() == "FL")
-            //    ((GameCharacterFL) character).setFuzzyLogic(fl);
         }
 
-        // Spawn goblin and Imp threads and put into pool
-        ExecutorService pool = Executors.newFixedThreadPool(MAX_NUM_OF_CHARACTERS);
-	    for (GameCharacterable character : this.characters) {
+        for (GameCharacterable character : this.characters) {
+        	 // Spawn goblin and Imp threads and put into pool
             pool.submit((GameCharacter) character);
         }
     }
@@ -61,12 +64,13 @@ public class Runner {
             }
         }
 
-        Location location = Location.setupLocationGraph(0, MAX_DEPTH, this.locations);
-        
+        Location location = Location.setupLocationGraph(MAX_DEPTH, this.locations);
+        location.togglePlayerHere();
+
         this.spawnCharacters(forceNNRebuild);
 
-        Player player = new Player(location);
-        (new Menu()).showMenuHeader().go(player);
+        Player player = new Player(location, INITIAL_HEALTH);
+        (new Menu(this.locations)).showMenuHeader().go(player);
     }
     
     public static void main(String[] args) throws Exception {
