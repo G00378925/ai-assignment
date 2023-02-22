@@ -8,7 +8,7 @@ import jhealy.aicme4j.net.*;
 public abstract class GameCharacterNN extends GameCharacter {
     private double[][] data, expected;
     private int[] hiddenLayerSizes;
-    protected double learningRate = 0.01, momentum = 0.95, maxError = 0.00001;
+    protected double learningRate = 0.0001, momentum = 0.95, maxError = 0.001;
     protected int epochs = 100000;
 
     private NeuralNetwork nn;
@@ -35,13 +35,15 @@ public abstract class GameCharacterNN extends GameCharacter {
                 .inputLayer("Input", data[0].length);
             
             for (int i = 0; i < this.hiddenLayerSizes.length; i++) {
-                nnBuilder.hiddenLayer("Hidden" + i, Activation.ARCTAN, this.hiddenLayerSizes[i]);
+                nnBuilder.hiddenLayer("Hidden" + i, Activation.RELU, this.hiddenLayerSizes[i]);
             }
             
-            this.nn = nnBuilder.outputLayer("Output", Activation.TANH, expected[0].length, false)
+            this.nn = nnBuilder.outputLayer("Output", Activation.LINEAR, expected[0].length, false)
                 .train(data, expected, this.learningRate, this.momentum, this.epochs, this.maxError, Loss.SSE)
                 .save(path)
                 .build();
+            
+            System.out.println(this.nn);
         }
     }
     

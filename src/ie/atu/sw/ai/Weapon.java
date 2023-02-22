@@ -10,7 +10,7 @@ public enum Weapon {
     FLAMETHROWER("FlameThrower", 60, 0),
     GLOCK("Glock", 40, 0),
     JAVELIN("Javelin", 40, 0),
-    SWORD("Sword", 40, 0);
+    SWORD("Sword", 40, 20);
     
     public static Weapon[] getWeapons() {
         return new Weapon[] {
@@ -18,7 +18,7 @@ public enum Weapon {
             FLAMETHROWER, GLOCK, JAVELIN, SWORD
         };
     }
-
+    
 	private String name;
     private double attackPoints, defencePoints;
 

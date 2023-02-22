@@ -60,7 +60,7 @@ public class Player {
     	}
     	
         if (enemy != null) {
-            System.out.println("You fight the " + enemy);
+            System.out.printf("You are fighting the %s.\n", enemy.getName());
             enemy.fight(weapon, this);
         } else {
             System.out.printf("%s is not around, maybe try elsewhere?\n", enemyName);
@@ -107,7 +107,7 @@ public class Player {
     }
 
     public void causeDamage(double damage) {
-    	System.out.printf("Player has taken %.2f", damage);
+    	System.out.printf("Player has taken %.2f damage.\n", damage);
         this.health -= damage;
     }
 }

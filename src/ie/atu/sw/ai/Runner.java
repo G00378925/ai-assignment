@@ -26,7 +26,7 @@ public class Runner {
                 int randomLocationIndex = new Random().nextInt(this.locations.size());
                 Location randomLocation = (Location) this.locations.toArray()[randomLocationIndex];
 
-                GameCharacterable character = switch (new Random().nextInt(3)) {
+                GameCharacterable character = switch (new Random().nextInt(1)) {
                     case 0 -> new Goblin(randomLocation);
                     case 1 -> new Imp(randomLocation);
                     case 2 -> new Dragon(randomLocation);

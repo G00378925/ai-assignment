@@ -4,7 +4,7 @@ import jhealy.aicme4j.net.*;
 
 public abstract class GameCharacter implements Runnable {
     private Location location;
-    private String name, colourName;
+    private String name;
     private ConsoleColour consoleColour;
 
     private double health = 100;
@@ -70,15 +70,15 @@ public abstract class GameCharacter implements Runnable {
     }
 
     public void causeDamage(double damage, Player opponent) {
-        System.out.printf("%s has taken %.2f damage.\n", this.name, damage);
+        System.out.printf("%s has taken %.2f damage.\n", this.getName(), damage);
         this.health -= damage;
 
         if (this.health <= 0) {
-            System.out.printf("%s has been killed.\n", this.name);
+            System.out.printf("%s has been killed.\n", this.getName());
             this.location.getEnemies().remove(this.toString());
             this.location = null;
 
-            System.out.printf("%s dropped a key.\n", this.name);
+            System.out.printf("%s dropped a key.\n", this.getName());
             opponent.setItem(Item.KEY);
         }
     }
