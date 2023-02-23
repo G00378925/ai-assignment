@@ -7,12 +7,12 @@ public enum Item {
 	
 	private String name;
     private boolean edible;
-    private float value;
+    private float healthValue;
     
-    private Item(String name, boolean edible, float value) {
+    private Item(String name, boolean edible, float healthValue) {
     	this.name = name;
         this.edible = edible;
-        this.value = value;
+        this.healthValue = healthValue;
     }
     
     public String getName() {
@@ -21,5 +21,9 @@ public enum Item {
     
     public boolean isEdible() {
     	return this.edible;
+    }
+
+    public float getHealthValue() {
+    	return this.healthValue;
     }
 }

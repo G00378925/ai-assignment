@@ -152,4 +152,8 @@ public class Location {
     public Dictionary<String, Item> getItems() {
     	return this.items;
     }
+    
+    public Dictionary<String, Weapon> getWeapons() {
+    	return this.weapons;
+    }
 }

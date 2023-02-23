@@ -39,4 +39,8 @@ public enum Weapon {
     public double getDefencePoints() {
         return this.defencePoints;
     }
+
+    public String toString() {
+        return this.name;
+    }
 }

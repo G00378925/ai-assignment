@@ -3,6 +3,8 @@ package ie.atu.sw.ai;
 import java.util.*;
 import java.util.concurrent.*;
 
+import jhealy.aicme4j.net.Aicme4jUtils;
+
 public class Runner {
     private static final int MAX_DEPTH = 2, MAX_NUM_OF_CHARACTERS = 40;
     private static final double INITIAL_HEALTH = 100.0;
@@ -19,7 +21,7 @@ public class Runner {
         this.pool = Executors.newFixedThreadPool(MAX_NUM_OF_CHARACTERS);
     }
 
-    private void spawnCharacters(boolean forceNNRebuild) throws Exception {
+    private void spawnCharacters() throws Exception {
         // Pick a random character to spawn in and add it to the characters array.
         for (int i = 0; i < MAX_NUM_OF_CHARACTERS; i++) {
             do {
@@ -42,11 +44,6 @@ public class Runner {
         }
 
         for (GameCharacterable character : this.characters) {
-            if (character.getAIType() == "NN")
-                ((GameCharacterNN) character).loadNeuralNetwork(forceNNRebuild);
-        }
-
-        for (GameCharacterable character : this.characters) {
         	 // Spawn goblin and Imp threads and put into pool
             pool.submit((GameCharacter) character);
         }
@@ -63,11 +60,15 @@ public class Runner {
                 }
             }
         }
+        
+        Goblin.loadNeuralNetwork(forceNNRebuild);
+        Imp.loadNeuralNetwork(forceNNRebuild);
+        Troll.loadNeuralNetwork(forceNNRebuild);
 
         Location location = Location.setupLocationGraph(MAX_DEPTH, this.locations);
         location.togglePlayerHere();
 
-        this.spawnCharacters(forceNNRebuild);
+        this.spawnCharacters();
 
         Player player = new Player(location, INITIAL_HEALTH);
         (new Menu()).showMenuHeader().go(player);

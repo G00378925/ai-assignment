@@ -8,6 +8,7 @@ public abstract class GameCharacter implements Runnable {
     private ConsoleColour consoleColour;
 
     private double health = 100;
+    private boolean alive = true;
     
     public GameCharacter(Location location, String name, ConsoleColour consoleColour) {
         this.location = location;
@@ -19,18 +20,18 @@ public abstract class GameCharacter implements Runnable {
     	String name = this.name.toUpperCase();
         this.location.getEnemies().remove(this.toString());
         
+        if (!alive) return;
         do {
     	    this.location = this.location.getRandomEdge();
         
-       	    if (this.location.getEnemies().get(name) != null) {
+       	    if (this.location.getEnemies().get(name) != null)
                 continue;
-       	    }
             
             this.location.getEnemies().put(name, (GameCharacterable) this);
         } while(false);
     }
 
-    public double[][] getData() {
+    public static double[][] getValidationData() {
         Weapon[] weapons = Weapon.getWeapons();
 
         double[][] data = new double[weapons.length][2];
@@ -44,7 +45,7 @@ public abstract class GameCharacter implements Runnable {
     }
 
     public void run() {
-        while (true) {
+        while (this.alive) {
             try {
                 Thread.sleep((long) (Math.random() * 10_000));
             		    
@@ -77,15 +78,14 @@ public abstract class GameCharacter implements Runnable {
             System.out.printf("%s has been killed.\n", this.getName());
             this.location.getEnemies().remove(this.toString());
             this.location = null;
+            this.alive = false;
 
             System.out.printf("%s dropped a key.\n", this.getName());
-            opponent.setItem(Item.KEY);
+            opponent.giveItem(Item.KEY);
         }
     }
-
-    public boolean equals(GameCharacter obj) {
-        return this.name.equals(obj.toString());
+    
+    public void pour(String objName) {
+    	System.err.printf("I don't have any %s.\n", objName);
     }
-
-    public abstract String getAIType();
 }

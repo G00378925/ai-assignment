@@ -1,9 +1,9 @@
 package ie.atu.sw.ai;
 
 public interface GameCharacterable {
-    public String getAIType();
+    public String getName();
 
     public void fight(Weapon weapon, Player opponent);
-    
-    public String getName();
+
+    public void pour(String objName);
 }

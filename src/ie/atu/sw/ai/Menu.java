@@ -63,21 +63,17 @@ public class Menu {
                     break;
                 }
                 case "EAT": {
-                	if (input.length < 2) {
+                	if (input.length < 2)
                 		System.err.println("EAT must be followed with the items name.");
-                		break;
-                	}
-                	
-                    player.eat(input[1]);
+                	else
+                        player.eat(input[1]);
                     break;
                 }
                 case "TELL": {
-                	if (input.length < 2) {
-                		// syntaxError(command);
-                		break;
-                	}
-                	
-                    player.tell(input[1]);
+                	if (input.length < 4)
+                		System.err.println("Correct syntax: TELL GOBLIN POUR ALE");
+                	else
+                        player.tell(input);
                     break;
                 }
                 default: {

@@ -1,54 +1,76 @@
 package ie.atu.sw.ai;
 
+import jhealy.aicme4j.NetworkBuilderFactory;
+import jhealy.aicme4j.net.Activation;
 import jhealy.aicme4j.net.Aicme4jUtils;
+import jhealy.aicme4j.net.Loss;
+import jhealy.aicme4j.net.NeuralNetwork;
 import jhealy.aicme4j.net.Output;
 
 public class Goblin extends GameCharacterNN implements GameCharacterable {
-    private static String NN_PATH = "./resources/neural/goblin.dat";
-
+    private static final String NN_PATH = "./resources/neural/goblin.dat";
+    private static final String NN_TRAINING_PATH = "./resources/neural/goblin.csv";
     private static final String NAME = "Goblin";
-    private static int[] hiddenLayerSizes = {10};
 
-    private double expected[][];
-    private double maxExpected = 0;
-
-    public Goblin(Location location) {
-        super(location, NAME, ConsoleColour.GREEN, hiddenLayerSizes);
-
-        this.expected = new double[Weapon.getWeapons().length][];
-        for (int i = 0; i < Weapon.getWeapons().length; i++) {
-            Weapon weapon = Weapon.getWeapons()[i];
+    private static double HIGHEST_POSSIBLE = (100 + 100) * 0.75;
+    
+    private static NeuralNetwork nn;
+    
+    private static double[][] generateExpected(double[][] data) {
+    	double expected[][] = new double[data.length][];
+        for (int i = 0; i < data.length; i++) {
             // Trolls response will be to the attack
             // and some extra to cover the defence that the player has
-            double trollResponse = weapon.getAttackPoints() + weapon.getDefencePoints();
+            double trollResponse = data[i][0] + data[i][1];
             trollResponse *= 0.75; // Goblins are 25% weaker than the player
 
-            this.expected[i] = new double[] {trollResponse};
-            
-            if (expected[i][0] > this.maxExpected)
-                this.maxExpected = expected[i][0] ;
+            expected[i] = new double[] {trollResponse};
         }
         
-
-        Aicme4jUtils.normalise(this.expected, 0, 1);
-        
-        this.setTrainingData(this.getData(), expected);
+        Aicme4jUtils.normalise(expected, 0, 1);
+        return expected;
     }
 
-    public void loadNeuralNetwork(boolean forceNNRebuild) throws Exception {
-        this.loadNeuralNetwork(NN_PATH, forceNNRebuild);
+    public static void loadNeuralNetwork(boolean forceNNRebuild) throws Exception {
+        nn = loadNN(NN_PATH);
+        if (nn != null && !forceNNRebuild) return;
+        
+        var trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
+        var data = trainingData[0];
+        var expected = trainingData[1];
+        
+        nn = NetworkBuilderFactory.getInstance().newNetworkBuilder()
+            .inputLayer("Input", data[0].length)
+            .hiddenLayer("Hidden", Activation.RELU, 10)
+            .outputLayer("Output", Activation.LINEAR, expected[0].length)
+            .train(data, expected, 0.0001, 0.95, 100000, 0.001, Loss.SSE)
+            .save(NN_PATH)
+            .build();
+        
+        System.out.println(nn);
+    }
+    
+    public Goblin(Location location) {
+        super(location, NAME, ConsoleColour.GREEN);
+    }
+    
+    public double[] getWeaponInput(Weapon weapon) {
+    	double[] nnInput = new double[] {
+    		weapon.getAttackPoints(), weapon.getDefencePoints()
+    	};
+    	return nnInput;
     }
     
     public void fight(Weapon weapon, Player opponent) {
         this.causeDamage(weapon.getAttackPoints(), opponent);
         
         if (this.getHealth() > 0) {
-            double input[] = {weapon.getAttackPoints(), weapon.getDefencePoints()};
-            Aicme4jUtils.normalise(input, 0, 1);
-            double trollResponse = this.process(input, Output.NUMERIC) * this.maxExpected;
+            var trollResponse = this.process(nn, getWeaponInput(weapon), Output.NUMERIC);
+            System.out.println("Troll response: " + trollResponse);
+            trollResponse -= weapon.getDefencePoints();
+            trollResponse = trollResponse < 0 ? 0 : trollResponse;
             
-            System.out.println("Response: " + trollResponse);
-            opponent.causeDamage(trollResponse - weapon.getDefencePoints());
+            opponent.causeDamage(trollResponse);
         }
     }
 }
