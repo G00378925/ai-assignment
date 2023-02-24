@@ -78,10 +78,15 @@ public abstract class GameCharacterNN extends GameCharacter {
             double output[] = process(nn, input, Output.NUMERIC);
             
             for (int j = 0; j < output.length; j++) {
+            	if (output.length > 1) System.out.printf("Output Index %d: ", j);
+            	
                 if (Math.abs(output[j] - expected[i][0]) > tolerance) {
-                    System.out.println("%.2f == %.2f".formatted(output[j], expected[i][0]));
+                    System.out.println(ConsoleColour.RED + "%.2f == %.2f".formatted(output[j], expected[i][0]));
                     passAllTests = false;
+                } else {
+                	System.out.println(ConsoleColour.GREEN + "%.2f == %.2f".formatted(output[j], expected[i][0]));
                 }
+                System.out.print(ConsoleColour.RESET);
             }
         }
     	

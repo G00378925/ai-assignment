@@ -30,7 +30,24 @@ public class Menu {
         return this;
     }
 
-    private void validate(String characterName) {
+    private static void train(String characterName) throws Exception {
+        switch (characterName) {
+            case "GOBLIN": {
+                Goblin.loadNeuralNetwork(true);
+                break;
+            }
+            case "IMP": {
+                Imp.loadNeuralNetwork(true);
+                break;
+            }
+            case "TROLL": {
+                Troll.loadNeuralNetwork(true);
+                break;
+            }
+        }
+    }
+
+    private static void validate(String characterName) {
         switch (characterName) {
             case "GOBLIN": {
                 Goblin.validate();
@@ -47,7 +64,7 @@ public class Menu {
         }
     }
 
-    public void go(Player player) {
+    public void go(Player player) throws Exception {
         while (true) {
             for (int i = 0; i < player.getEnemies().size(); i++) {
                 GameCharacterable enemy = (new ArrayList<>(player.getEnemies())).get(i);
@@ -98,8 +115,11 @@ public class Menu {
                     player.look();
                     break;
                 }
-                case "RETRAIN": {
-                	loadNeuralNetworks(true);
+                case "TRAIN": {
+                	if (input.length < 2)
+                	    loadNeuralNetworks(true);
+                	else
+                		train(input[1]);
                 	break;
                 }
                 case "TELL": {

@@ -1,6 +1,5 @@
 package ie.atu.sw.ai;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.function.BiFunction;
@@ -11,7 +10,7 @@ public class GenerateTrainingData {
 	};
 
     private static final BiFunction<Double, Double, Double> goblinAttack = 
-        (attack, defence) -> (attack + defence) * 0.75;
+        (attack, defence) -> ((attack + defence) * 0.75);
 
     private static final BiFunction<Double, Double, Double> impAttack = 
         (attack, defence) -> Math.floor((attack + defence) / 50);
@@ -23,13 +22,17 @@ public class GenerateTrainingData {
 	
     private static void genGoblinTrainingData(PrintWriter pw) {
         pw.println("# Goblin Training Data");
+        pw.println("# This is the training data for the Goblin.");
+        pw.println("# Goblins determine their attack based on the attack and defence of a weapon.");
+        pw.println("# Goblins are 25% weaker than the player, hence the 0.75.");
+        pw.println();
+        pw.println("# 1. Attack, 2. Defence, 3. Output");
+        pw.println("# Output = (Attack + Defence) * 0.75");
         
-        // Trolls response will be to the attack
-        // and some extra to cover the defence that the player has
-    	for (int attack = 0; attack <= 100; attack += 10) {
-            for (int defence = 0; defence <= 100; defence += 10) {
-                double result = goblinAttack.apply((double) attack, (double) attack);
-                pw.printf("%d, %d, %f\n", attack, defence, (attack + defence) * 0.75);
+    	for (double attack = 0; attack <= 100; attack += 10) {
+            for (double defence = 0; defence <= 100; defence += 10) {
+                double output = goblinAttack.apply(attack, defence);
+                pw.printf("%.0f, %.0f, %.2f\n", attack, defence, output);
             }
         }
     }
@@ -39,20 +42,18 @@ public class GenerateTrainingData {
 
     	for (int i = 0; i < 100; i++) {
             double attack = Math.random() * 100, defence = Math.random() * 100;
-            var result = goblinAttack.apply((double) attack, (double) defence);
-
-            pw.printf("%f, %f, %f\n", attack, defence, result);
+            double output = goblinAttack.apply(attack, defence);
+            pw.printf("%f, %f, %f\n", attack, defence, output);
         }
     }
 
     private static void genImpTrainingData(PrintWriter pw) {
         pw.println("# Imp Training Data");
 
-        for (int attack = 0; attack < 100; attack += 10) {
-            for (int defence = 0; defence <= 100; defence += 10) {
-                var result = impAttack.apply((double) attack, (double) defence);
-
-                pw.printf("%d, %d, %.0f\n", attack, defence, result);
+        for (double attack = 0; attack < 100; attack += 10) {
+            for (double defence = 0; defence <= 100; defence += 10) {
+                double output = impAttack.apply(attack, defence);
+                pw.printf("%.0f, %.0f, %.0f\n", attack, defence, output);
             }
         }
     }
@@ -62,22 +63,19 @@ public class GenerateTrainingData {
 
         for (int i = 0; i < 100; i++) {
             double attack = Math.random() * 100, defence = Math.random() * 100;
-            var result = impAttack.apply((double) attack, (double) defence);
-
-            pw.printf("%f, %f, %.0f\n", attack, defence, result);
+            double output = impAttack.apply(attack, defence);
+            pw.printf("%f, %f, %.0f\n", attack, defence, output);
         }
     }
 
     private static void genTrollTrainingData(PrintWriter pw) {
         pw.println("# Troll Training Data");
 
-        for (int attack = 0; attack <= 100; attack += 10) {
-            for (int sharpI = 0; sharpI <= 1; sharpI++) {
-                var sharp = sharpI == 1;
-                var resultPunch = trollAttackPunch.apply((double) attack, sharp);
-                var resultKick = trollAttackKick.apply((double) attack, sharp);
-
-                pw.printf("%d, %d, %.0f, %.0f\n", attack, sharp ? 1 : 0, resultPunch, resultKick);
+        for (double attack = 0; attack <= 100; attack += 5) {
+            for (int sharp = 0; sharp <= 1; sharp++) {
+                double resultPunch = trollAttackPunch.apply(attack, sharp == 1);
+                double resultKick = trollAttackKick.apply(attack, sharp == 1);
+                pw.printf("%.0f, %d, %.2f, %.2f\n", attack, sharp, resultPunch, resultKick);
             }
         }
     }
@@ -87,15 +85,14 @@ public class GenerateTrainingData {
 
         for (int i = 0; i < 100; i++) {
             double attack = Math.random() * 100;
-            var sharp = Math.random() > 0.5;
-            var resultPunch = trollAttackPunch.apply(attack, sharp);
-            var resultKick = trollAttackKick.apply(attack, sharp);
-            
-            pw.printf("%f, %d, %f, %f\n", attack, sharp ? 1 : 0, resultPunch, resultKick);
+            boolean sharp = Math.random() > 0.5;
+            double resultPunch = trollAttackPunch.apply(attack, sharp);
+            double resultKick = trollAttackKick.apply(attack, sharp);
+            pw.printf("%f, %d, %.2f, %.2f\n", attack, sharp ? 1 : 0, resultPunch, resultKick);
         }
     }
 
-    public static void generateTrainingData(String path) throws FileNotFoundException {
+    public static void generateTrainingData(String path) throws Exception {
     	for (int i = 0; i < GC_NAMES.length; i++) {
     		String gameCharacterName = GC_NAMES[i].toLowerCase();
 
@@ -124,7 +121,10 @@ public class GenerateTrainingData {
     		}
 
             trainingPW.close();
+            trainingOS.close();
+
             validationPW.close();
+            validationOS.close();
     	}
     }
 }

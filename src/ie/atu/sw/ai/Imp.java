@@ -20,7 +20,7 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
     	return oneHotVector;
     }
 
-    public static void loadNeuralNetwork(boolean forceNNRebuild) throws Exception {
+    public static void loadNeuralNetwork(boolean forceNNRebuild) throws Exception {    	
         nn = loadNN(NN_PATH);
         if (nn != null && !forceNNRebuild) return;
         
@@ -28,11 +28,12 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
         var trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
         var data = trainingData[0];
         var expected = genOneHotVector(trainingData[1], 4);
+        Aicme4jUtils.normalise(data, -1, 1);
         
         nn = NetworkBuilderFactory.getInstance().newNetworkBuilder()
                 .inputLayer("Input", data[0].length)
-                .hiddenLayer("Hidden", Activation.SIGMOID, 10)
-                .outputLayer("Output", Activation.SIGMOID, expected[0].length)
+                .hiddenLayer("Hidden", Activation.TANH, 16)
+                .outputLayer("Output", Activation.LINEAR, expected[0].length)
                 .train(data, expected, 0.001, 0.95, 100000, 0.001, Loss.SSE)
                 .save(NN_PATH)
                 .build();
@@ -44,6 +45,7 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
         var trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
         var data = trainingData[0];
         var expected = trainingData[1];
+        Aicme4jUtils.normalise(data, -1, 1);
         
         boolean passAllTests = true;
         for (int i = 0; i < data.length; i++) {
