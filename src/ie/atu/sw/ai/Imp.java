@@ -47,7 +47,7 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
         
         boolean passAllTests = true;
         for (int i = 0; i < data.length; i++) {
-            double index = process(nn, data[i], Output.LABEL_INDEX);
+            double index = process(nn, data[i], Output.LABEL_INDEX)[0];
             
             if ((int) index != expected[i][0]) {
             	System.err.printf("Input: %.2f %.2f, ", data[i][0], data[i][1]);
@@ -71,10 +71,9 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
 
     public void fight(Weapon weapon, Player opponent) {
         double attackTier[] = {12.5, 25, 37.5, 50};    
-
         this.causeDamage(weapon.getAttackPoints(), opponent);
 
-        int index = (int) process(nn, getWeaponInput(weapon), Output.LABEL_INDEX);
+        int index = (int) process(nn, getWeaponInput(weapon), Output.LABEL_INDEX)[0];
         opponent.causeDamage(attackTier[index]);
     }
 }

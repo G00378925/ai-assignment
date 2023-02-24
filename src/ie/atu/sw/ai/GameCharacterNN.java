@@ -59,20 +59,30 @@ public abstract class GameCharacterNN extends GameCharacter {
     	return output;
     }
 
-    public static double process(NeuralNetwork nn, double[] input, Output outputType) {
+    public static double[] process(NeuralNetwork nn, double[] input, Output outputType) {
         try {
-            return nn.process(input, outputType);
+        	if (outputType == Output.LABEL_INDEX) {
+                return new double[] {nn.process(input, outputType)};
+        	}
+            nn.process(input, outputType);
+            return nn.getOutputLayer();
         } catch (Exception e) {
-    		return 0;
+    		return null;
         }
     }
     
-    public static void validate(NeuralNetwork nn, double[][] data, double[][] expected, double tollerance) {
+    public static void validate(NeuralNetwork nn, double[][] data, double[][] expected, double tolerance) {
     	boolean passAllTests = true;
         for (int i = 0; i < data.length; i++) {
             double[] input = data[i];
-            var goblinResponse = process(nn, input, Output.NUMERIC);
-            System.out.println("%.2f == %.2f".formatted(goblinResponse, expected[i][0]));
+            double output[] = process(nn, input, Output.NUMERIC);
+            
+            for (int j = 0; j < output.length; j++) {
+                if (Math.abs(output[j] - expected[i][0]) > tolerance) {
+                    System.out.println("%.2f == %.2f".formatted(output[j], expected[i][0]));
+                    passAllTests = false;
+                }
+            }
         }
     	
         if (passAllTests) System.out.println("All validation tests pass");

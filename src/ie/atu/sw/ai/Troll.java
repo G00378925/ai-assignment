@@ -16,15 +16,17 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
         if (nn != null && !forceNNRebuild) return;
         
         System.out.println(ConsoleColour.YELLOW + "Training " + NAME + " . . ." + ConsoleColour.RESET);
-        var trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
+        var trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 2);
         var data = trainingData[0];
         var expected = trainingData[1];
+       
+        Aicme4jUtils.normalise(data, -1, 1);
         
         nn = NetworkBuilderFactory.getInstance().newNetworkBuilder()
             .inputLayer("Input", data[0].length)
-            .hiddenLayer("Hidden", Activation.RELU, 10)
+            .hiddenLayer("Hidden", Activation.TANH, 16)
             .outputLayer("Output", Activation.LINEAR, expected[0].length)
-            .train(data, expected, 0.0001, 0.95, 100000, 0.001, Loss.SSE)
+            .train(data, expected, 0.0001, 0.95, 100000, 0.001, Loss.CEE)
             .save(NN_PATH)
             .build();
         
@@ -35,6 +37,7 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
         var trainingData = GameCharacterNN.loadCSVData(NN_VALIDATION_PATH, 2, 1);
         var data = trainingData[0];
         var expected = trainingData[1];
+        Aicme4jUtils.normalise(data, -1, 1);
         
         validate(nn, data, expected, 1);
     }
@@ -51,5 +54,11 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     
     public void fight(Weapon weapon, Player opponent) {
         this.causeDamage(weapon.getAttackPoints(), opponent);
+        
+        double result[] = process(nn, getWeaponInput(weapon), Output.NUMERIC);
+        double punch = result[0], kick = result[1];
+        
+        opponent.causeDamage(punch);
+        opponent.causeDamage(kick);
     }
 }

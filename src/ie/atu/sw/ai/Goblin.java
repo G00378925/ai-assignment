@@ -23,12 +23,14 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
         var trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
         var data = trainingData[0];
         var expected = trainingData[1];
+        
+        Aicme4jUtils.normalise(data, 0, 1);
 
         nn = NetworkBuilderFactory.getInstance().newNetworkBuilder()
             .inputLayer("Input", data[0].length)
-            .hiddenLayer("Hidden", Activation.SELU, 8)
+            .hiddenLayer("Hidden", Activation.RELU, 16)
             .outputLayer("Output", Activation.LINEAR, expected[0].length)
-            .train(data, expected, 0.0001, 0.95, 100000, 0.00001, Loss.SSE)
+            .train(data, expected, 0.0001, 0.95, 100000, 0.00001, Loss.MSE)
             .save(NN_PATH)
             .build();
         
@@ -36,8 +38,9 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
     }
     
     public static void validate() {
-        var trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
-        validate(nn, trainingData[0], trainingData[1], 1);
+        var trainingData = GameCharacterNN.loadCSVData(NN_VALIDATION_PATH, 2, 1);
+        Aicme4jUtils.normalise(trainingData[0], 0, 1);
+        validate(nn, trainingData[0], trainingData[1], 2);
     }
     
     public Goblin(Location location) {
@@ -54,7 +57,7 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
         this.causeDamage(weapon.getAttackPoints(), opponent);
         
         if (this.getHealth() > 0) {
-            var trollResponse = process(nn, getWeaponInput(weapon), Output.NUMERIC);
+            var trollResponse = process(nn, getWeaponInput(weapon), Output.NUMERIC)[0];
             System.out.println("Troll response: " + trollResponse);
             trollResponse -= weapon.getDefencePoints();
             trollResponse = trollResponse < 0 ? 0 : trollResponse;
