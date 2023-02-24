@@ -32,9 +32,9 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
         
         nn = NetworkBuilderFactory.getInstance().newNetworkBuilder()
                 .inputLayer("Input", data[0].length)
-                .hiddenLayer("Hidden", Activation.TANH, 16)
+                .hiddenLayer("Hidden", Activation.LEAKY_RELU, 8)
                 .outputLayer("Output", Activation.LINEAR, expected[0].length)
-                .train(data, expected, 0.001, 0.95, 100000, 0.001, Loss.SSE)
+                .train(data, expected, 0.001, 0.95, 100000, 0.001, Loss.CEE)
                 .save(NN_PATH)
                 .build();
         
@@ -47,18 +47,20 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
         var expected = trainingData[1];
         Aicme4jUtils.normalise(data, -1, 1);
         
-        boolean passAllTests = true;
         for (int i = 0; i < data.length; i++) {
             double index = process(nn, data[i], Output.LABEL_INDEX)[0];
             
-            if ((int) index != expected[i][0]) {
-            	System.err.printf("Input: %.2f %.2f, ", data[i][0], data[i][1]);
-            	System.err.printf("Output: %.2f != %.2f\n", expected[i][0], index);
-            	passAllTests = false;
-            }
+            System.out.print(ConsoleColour.YELLOW);
+            System.err.printf("Input: %.2f %.2f, ", data[i][0], data[i][1]);
+            
+            if (index == expected[i][0])
+            	System.out.print(ConsoleColour.GREEN);
+            else
+            	System.out.print(ConsoleColour.RED);
+            
+            System.err.printf("Output: %.2f == %.2f", expected[i][0], index);
+            System.out.println(ConsoleColour.RESET);
         }
-    	
-        if (passAllTests) System.out.println("All validation tests pass");
     }
     
     public Imp(Location location) {
