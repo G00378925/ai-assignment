@@ -1,10 +1,6 @@
 package ie.atu.sw.ai;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.*;
 
 public class Player {
     private Location currentLocation;

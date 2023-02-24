@@ -11,7 +11,6 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
     private static final String NN_PATH = "./resources/neural/goblin.dat";
     private static final String NN_TRAINING_PATH = "./resources/neural/goblin_training.csv";
     private static final String NN_VALIDATION_PATH = "./resources/neural/goblin_validation.csv";
-    private static final String NAME = "Goblin";
 
     private static NeuralNetwork nn;
     
@@ -19,10 +18,9 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
         nn = loadNN(NN_PATH);
         if (nn != null && !forceNNRebuild) return;
         
-        System.out.println(ConsoleColour.YELLOW + "Training " + NAME + " . . ." + ConsoleColour.RESET);
-        var trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
-        var data = trainingData[0];
-        var expected = trainingData[1];
+        System.out.println(ConsoleColour.YELLOW + "Training Goblin . . ." + ConsoleColour.RESET);
+        double[][][] trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
+        double[][] data = trainingData[0], expected = trainingData[1];
         
         Aicme4jUtils.normalise(data, 0, 1);
 
@@ -44,7 +42,7 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
     }
     
     public Goblin(Location location) {
-        super(location, NAME, ConsoleColour.GREEN);
+        super(location, "Goblin", ConsoleColour.GREEN);
     }
     
     public double[] getWeaponInput(Weapon weapon) {

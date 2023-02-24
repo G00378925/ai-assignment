@@ -7,7 +7,6 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     private static final String NN_PATH = "./resources/neural/troll.dat";
     private static final String NN_TRAINING_PATH = "./resources/neural/troll_training.csv";
     private static final String NN_VALIDATION_PATH = "./resources/neural/troll_validation.csv";
-    private static final String NAME = "Troll";
     
     private static NeuralNetwork nn;
     
@@ -15,10 +14,9 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
         nn = loadNN(NN_PATH);
         if (nn != null && !forceNNRebuild) return;
         
-        System.out.println(ConsoleColour.YELLOW + "Training " + NAME + " . . ." + ConsoleColour.RESET);
-        var trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 2);
-        var data = trainingData[0];
-        var expected = trainingData[1];
+        System.out.println(ConsoleColour.YELLOW + "Training Troll . . ." + ConsoleColour.RESET);
+        double[][][] trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 2);
+        double[][] data = trainingData[0], expected = trainingData[1];
         
         Aicme4jUtils.normalise(data, -1, 1);
         Aicme4jUtils.normalise(expected, -1, 1);
@@ -36,9 +34,8 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     }
     
     public static void validate() {
-        var trainingData = GameCharacterNN.loadCSVData(NN_VALIDATION_PATH, 2, 1);
-        var data = trainingData[0];
-        var expected = trainingData[1];
+        double[][][] trainingData = GameCharacterNN.loadCSVData(NN_VALIDATION_PATH, 2, 1);
+        double[][] data = trainingData[0], expected = trainingData[1];
         
         Aicme4jUtils.normalise(data, -1, 1);
         Aicme4jUtils.normalise(expected, -1, 1);
@@ -47,13 +44,11 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     }
 
     public Troll(Location location) {
-        super(location, NAME, ConsoleColour.BLUE_BRIGHT);
+        super(location, "Troll", ConsoleColour.BLUE_BRIGHT);
     }
     
     public double[] getWeaponInput(Weapon weapon) {
-    	return new double[] {
-    		weapon.getAttackPoints(), weapon.isSharp() ? 1 : 0
-    	};
+    	return new double[] {weapon.getAttackPoints(), weapon.isSharp() ? 1 : 0};
     }
     
     public void fight(Weapon weapon, Player opponent) {

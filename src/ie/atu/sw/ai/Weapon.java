@@ -12,13 +12,6 @@ public enum Weapon {
     JAVELIN("Javelin", 40, 0, false),
     SWORD("Sword", 40, 20, true);
     
-    public static Weapon[] getWeapons() {
-        return new Weapon[] {
-            AK47, AR15, AXE, BATTON, CROSSBOW, C4,
-            FLAMETHROWER, GLOCK, JAVELIN, SWORD
-        };
-    }
-    
 	private String name;
     private double attackPoints, defencePoints;
     private boolean sharp;

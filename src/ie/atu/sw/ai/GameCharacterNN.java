@@ -21,25 +21,23 @@ public abstract class GameCharacterNN extends GameCharacter {
     }
     
     public static double[][][] loadCSVData(String csvPath, int inputSize, int outputSize) {
-    	var output = new double[2][][];
-
-        var inputAL = new ArrayList<double[]>();
-        var outputAL = new ArrayList<double[]>();
+    	double[][][] output = new double[2][][];
+        ArrayList<double[]> inputAL = new ArrayList<double[]>(), outputAL = new ArrayList<double[]>();
 
         try {
-            var fileReader = new FileReader(csvPath);
-            var scanner = new Scanner(fileReader);
+            FileReader fileReader = new FileReader(csvPath);
+            Scanner scanner = new Scanner(fileReader);
 
             while (scanner.hasNextLine()) {
-                var line = scanner.nextLine().trim();
+                String line = scanner.nextLine().trim();
 
                 if (line.isEmpty() || line.charAt(0) == '#') continue;
 
-                var values = Arrays.stream(line.split("#")[0].split(","))
+                double[] values = Arrays.stream(line.split("#")[0].split(","))
                     .mapToDouble(Double::parseDouble).toArray();
 
-                var _input = new double[inputSize];
-                var _output = new double[outputSize];
+                double[] _input = new double[inputSize];
+                double[] _output = new double[outputSize];
 
                 for (int i = 0; i < inputSize; i++) _input[i] = values[i];
                 for (int i = 0; i < outputSize; i++) _output[i] = values[inputSize + i];
@@ -61,9 +59,9 @@ public abstract class GameCharacterNN extends GameCharacter {
 
     public static double[] process(NeuralNetwork nn, double[] input, Output outputType) {
         try {
-        	if (outputType == Output.LABEL_INDEX) {
+        	if (outputType == Output.LABEL_INDEX)
                 return new double[] {nn.process(input, outputType)};
-        	}
+
             nn.process(input, outputType);
             return nn.getOutputLayer();
         } catch (Exception e) {
@@ -72,10 +70,9 @@ public abstract class GameCharacterNN extends GameCharacter {
     }
     
     public static void validate(NeuralNetwork nn, double[][] data, double[][] expected, double tolerance) {
-    	boolean passAllTests = true;
         for (int i = 0; i < data.length; i++) {
             double[] input = data[i];
-            double output[] = process(nn, input, Output.NUMERIC);
+            double[] output = process(nn, input, Output.NUMERIC);
             
             for (int j = 0; j < output.length; j++) {
             	if (output.length > 1) System.out.printf("Output Index %d: ", j);

@@ -1,7 +1,5 @@
 package ie.atu.sw.ai;
 
-import jhealy.aicme4j.net.*;
-
 public abstract class GameCharacter implements Runnable {
     private Location location;
     private String name;
@@ -29,19 +27,6 @@ public abstract class GameCharacter implements Runnable {
             
             this.location.getEnemies().put(name, (GameCharacterable) this);
         } while(false);
-    }
-
-    public static double[][] getValidationData() {
-        Weapon[] weapons = Weapon.getWeapons();
-
-        double[][] data = new double[weapons.length][2];
-        for (int i = 0; i < weapons.length; i++) {
-            data[i][0] = weapons[i].getAttackPoints();
-            data[i][1] = weapons[i].getDefencePoints();
-        }
-
-        Aicme4jUtils.normalise(data, 0, 1);
-        return data;
     }
 
     public void run() {

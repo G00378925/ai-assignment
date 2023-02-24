@@ -15,6 +15,12 @@ public class Menu {
         }
     }
     
+    public void validateNeuralNetworks() {
+    	Goblin.validate();
+    	Imp.validate();
+    	Troll.validate();
+    }
+    
     public Menu showMenuHeader() {
         System.out.println(ConsoleColour.RED);
         System.out.println("************************************************************");
@@ -30,7 +36,7 @@ public class Menu {
         return this;
     }
 
-    private static void train(String characterName) throws Exception {
+    private void train(String characterName) throws Exception {
         switch (characterName) {
             case "GOBLIN": {
                 Goblin.loadNeuralNetwork(true);
@@ -47,7 +53,7 @@ public class Menu {
         }
     }
 
-    private static void validate(String characterName) {
+    private void validate(String characterName) {
         switch (characterName) {
             case "GOBLIN": {
                 Goblin.validate();
@@ -119,7 +125,7 @@ public class Menu {
                 	if (input.length < 2)
                 	    loadNeuralNetworks(true);
                 	else
-                		train(input[1]);
+                		this.train(input[1]);
                 	break;
                 }
                 case "TELL": {
@@ -130,12 +136,10 @@ public class Menu {
                     break;
                 }
                 case "VALIDATE": {
-                    if (input.length < 2) {
-                        System.err.println("Correct syntax: VALIDATE GOBLIN");
-                        break;
-                    }
-
-                    this.validate(input[1]);
+                    if (input.length < 2)
+                    	this.validateNeuralNetworks();
+                    else
+                        this.validate(input[1]);
                     break;
                 }
                 default: {

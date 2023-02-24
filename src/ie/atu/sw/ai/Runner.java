@@ -3,11 +3,9 @@ package ie.atu.sw.ai;
 import java.util.*;
 import java.util.concurrent.*;
 
-import jhealy.aicme4j.net.Aicme4jUtils;
-
 public class Runner {
     private static final int MAX_DEPTH = 2, MAX_NUM_OF_CHARACTERS = 40;
-    private static final double INITIAL_HEALTH = 100.0;
+    private static final double INITIAL_PLAYER_HEALTH = 100.0;
 
     private Collection<GameCharacterable> characters;
     private Collection<Location> locations;
@@ -51,17 +49,6 @@ public class Runner {
 
     private void go(String[] args) throws Exception {
     	GenerateTrainingData.generateTrainingData("./resources/neural/");
-    	
-        boolean forceNNRebuild = false;
-        for (String arg : args) {
-            switch (arg) {
-                case "--nn-rebuild": {
-                    forceNNRebuild = true;
-                    break;
-                }
-            }
-        }
-        
         Menu.loadNeuralNetworks(false);
 
         Location location = Location.setupLocationGraph(MAX_DEPTH, this.locations);
@@ -69,7 +56,7 @@ public class Runner {
 
         this.spawnCharacters();
 
-        Player player = new Player(location, INITIAL_HEALTH);
+        Player player = new Player(location, INITIAL_PLAYER_HEALTH);
         (new Menu()).showMenuHeader().go(player);
     }
     
