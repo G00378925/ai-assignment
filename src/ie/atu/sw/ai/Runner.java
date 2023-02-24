@@ -50,8 +50,9 @@ public class Runner {
     }
 
     private void go(String[] args) throws Exception {
+    	GenerateTrainingData.generateTrainingData("./resources/neural/");
+    	
         boolean forceNNRebuild = false;
-
         for (String arg : args) {
             switch (arg) {
                 case "--nn-rebuild": {
@@ -61,9 +62,7 @@ public class Runner {
             }
         }
         
-        Goblin.loadNeuralNetwork(forceNNRebuild);
-        Imp.loadNeuralNetwork(forceNNRebuild);
-        Troll.loadNeuralNetwork(forceNNRebuild);
+        Menu.loadNeuralNetworks(false);
 
         Location location = Location.setupLocationGraph(MAX_DEPTH, this.locations);
         location.togglePlayerHere();

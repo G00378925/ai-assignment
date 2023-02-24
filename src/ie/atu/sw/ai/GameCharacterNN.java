@@ -59,12 +59,22 @@ public abstract class GameCharacterNN extends GameCharacter {
     	return output;
     }
 
-    public double process(NeuralNetwork nn, double[] input, Output output) {
+    public static double process(NeuralNetwork nn, double[] input, Output outputType) {
         try {
-            return nn.process(input, output);
+            return nn.process(input, outputType);
         } catch (Exception e) {
-            e.printStackTrace();
+    		return 0;
         }
-		return 0;
+    }
+    
+    public static void validate(NeuralNetwork nn, double[][] data, double[][] expected, double tollerance) {
+    	boolean passAllTests = true;
+        for (int i = 0; i < data.length; i++) {
+            double[] input = data[i];
+            var goblinResponse = process(nn, input, Output.NUMERIC);
+            System.out.println("%.2f == %.2f".formatted(goblinResponse, expected[i][0]));
+        }
+    	
+        if (passAllTests) System.out.println("All validation tests pass");
     }
 }
