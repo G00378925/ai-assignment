@@ -70,25 +70,34 @@ public abstract class GameCharacterNN extends GameCharacter {
     }
     
     public static void validate(NeuralNetwork nn, double[][] data, double[][] expected, double tolerance) {
-        for (int i = 0; i < data.length; i++) {
+        int errorCount = 0;
+        
+    	for (int i = 0; i < data.length; i++) {
             double[] input = data[i];
             double[] output = process(nn, input, Output.NUMERIC);
             
-            for (int j = 0; j < output.length; j++) {
-            	if (output.length > 1) System.out.printf("Output Index %d: ", j);
-            	
-                System.out.print(ConsoleColour.YELLOW);
-                for (double num : input)
-                	System.out.printf("%.2f, ", num);
-
-                if (Math.abs(output[j] - expected[i][0]) < tolerance)
+            System.out.print(ConsoleColour.YELLOW);
+            System.out.print("Input: ");
+            for (double num : input)
+            	System.out.printf("%.2f, ", num);
+            
+            System.out.print("Output: ");
+            for (int j = 0; j < output.length; j++) {            	
+                if (Math.abs(output[j] - expected[i][j]) < tolerance) {
                 	System.out.print(ConsoleColour.GREEN);
-                else
+                } else {
                 	System.out.print(ConsoleColour.RED);
+                	errorCount++;
+                }
                 
-                System.out.print("%.2f == %.2f".formatted(output[j], expected[i][0]));
-                System.out.println(ConsoleColour.RESET);
+            	if (output.length > 1) System.out.printf("Index %d: ", j);
+                System.out.printf("%.2f == %.2f ", output[j], expected[i][j]);
             }
+            
+            System.out.println(ConsoleColour.RESET);
         }
+    	
+    	int sampleCount = expected.length * expected[0].length;
+    	System.out.printf("Error count: %d out of %d\n", errorCount, sampleCount);
     }
 }

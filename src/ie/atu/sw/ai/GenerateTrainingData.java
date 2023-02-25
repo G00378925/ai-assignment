@@ -10,15 +10,15 @@ public class GenerateTrainingData {
 	};
 
     private static final BiFunction<Double, Double, Double> goblinAttack = 
-        (attack, defence) -> ((attack + defence) * 0.75);
+        (attack, defence) -> ((attack + defence) * 0.5);
 
     private static final BiFunction<Double, Double, Double> impAttack = 
         (attack, defence) -> Math.floor((attack + defence) / 50);
 
     private static final BiFunction<Double, Boolean, Double> trollAttackPunch =
-        (attack, sharp) -> (attack + (sharp ? (attack * 0.5) : 0)) * 0.5;
+        (attack, sharp) -> (attack + (sharp ? (attack * 1.5) : 0));
     private static final BiFunction<Double, Boolean, Double> trollAttackKick =
-        (attack, sharp) -> attack * 0.65;
+        (attack, sharp) -> (attack * 0.65) * (sharp ? 1.25 : 1);
 	
     private static void genGoblinTrainingData(PrintWriter pw) {
         pw.println("# Goblin Training Data");
@@ -71,7 +71,7 @@ public class GenerateTrainingData {
     private static void genTrollTrainingData(PrintWriter pw) {
         pw.println("# Troll Training Data");
 
-        for (double attack = 0; attack <= 100; attack += 5) {
+        for (double attack = 0; attack <= 100; attack += 2) {
             for (int sharp = 0; sharp <= 1; sharp++) {
                 double resultPunch = trollAttackPunch.apply(attack, sharp == 1);
                 double resultKick = trollAttackKick.apply(attack, sharp == 1);

@@ -129,10 +129,10 @@ public class Location {
         this.description = LOCATION_DESCRIPTIONS[randomLocationIndex];
 
         for (Item item : LOCATION_ITEMS[randomLocationIndex])
-            this.items.put(item.toString(), item);
+            this.items.put(item.toString().toUpperCase(), item);
 
         for (Weapon weapon : LOCATION_WEAPONS[randomLocationIndex])
-        	this.weapons.put(weapon.toString(), weapon);
+        	this.weapons.put(weapon.toString().toUpperCase(), weapon);
         
         this.playerHere = false;
     }

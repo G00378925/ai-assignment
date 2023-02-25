@@ -54,6 +54,10 @@ public abstract class GameCharacter implements Runnable {
     public double getHealth() {
     	return this.health;
     }
+    
+    public boolean isAlive() {
+    	return this.alive;
+    }
 
     public void causeDamage(double damage, Player opponent) {
         System.out.printf("%s has taken %.2f damage.\n", this.getName(), damage);

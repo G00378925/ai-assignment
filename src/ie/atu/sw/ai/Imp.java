@@ -30,7 +30,7 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
         
         nn = NetworkBuilderFactory.getInstance().newNetworkBuilder()
                 .inputLayer("Input", data[0].length)
-                .hiddenLayer("Hidden", Activation.LEAKY_RELU, 8)
+                .hiddenLayer("Hidden", Activation.LEAKY_RELU, 4)
                 .outputLayer("Output", Activation.LINEAR, expected[0].length)
                 .train(data, expected, 0.001, 0.95, 100000, 0.001, Loss.CEE)
                 .save(NN_PATH)
@@ -40,6 +40,9 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
     }
     
     public static void validate() {
+        System.out.println(ConsoleColour.PURPLE + "Validating Imp . . ." + ConsoleColour.RESET);
+        int errorCount = 0;
+
         double[][][] trainingData = GameCharacterNN.loadCSVData(NN_VALIDATION_PATH, 2, 1);
         double[][] data = trainingData[0], expected = trainingData[1];
         Aicme4jUtils.normalise(data, -1, 1);
@@ -48,14 +51,18 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
             double index = process(nn, data[i], Output.LABEL_INDEX)[0];
             
             System.out.print(ConsoleColour.YELLOW);
-            System.err.printf("Input: %.2f %.2f, ", data[i][0], data[i][1]);
+            System.err.printf("Input: %.2f %.2f, Output: ", data[i][0], data[i][1]);
             
-            if (index == expected[i][0]) System.out.print(ConsoleColour.GREEN);
-            else System.out.print(ConsoleColour.RED);
+            if (index == expected[i][0]) {
+            	System.out.print(ConsoleColour.GREEN);
+            } else {
+            	System.out.print(ConsoleColour.RED);
+            	errorCount++;
+            }
             
-            System.err.printf("Output: %.2f == %.2f", expected[i][0], index);
-            System.out.println(ConsoleColour.RESET);
+            System.err.printf("%.2f == %.2f" + ConsoleColour.RESET + "\n", expected[i][0], index);
         }
+    	System.out.printf("Error count: %d out of %d\n", errorCount, expected.length);
     }
     
     public Imp(Location location) {
@@ -67,10 +74,16 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
     }
 
     public void fight(Weapon weapon, Player opponent) {
-        double attackTier[] = {12.5, 25, 37.5, 50};    
         this.causeDamage(weapon.getAttackPoints(), opponent);
-
-        int index = (int) process(nn, getWeaponInput(weapon), Output.LABEL_INDEX)[0];
-        opponent.causeDamage(attackTier[index]);
+        if (!this.isAlive()) return;
+        
+        if (this.getHealth() > 0) {
+        	double[] input = getWeaponInput(weapon);
+        	Aicme4jUtils.normalise(input, -1, 1);
+        	
+            double attackTier[] = {12.5, 25, 37.5, 50};
+            int impRespIndex = (int) process(nn, getWeaponInput(weapon), Output.LABEL_INDEX)[0];
+            opponent.causeDamage(attackTier[impRespIndex]);
+        }
     }
 }

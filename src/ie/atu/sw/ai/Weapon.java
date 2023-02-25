@@ -11,7 +11,7 @@ public enum Weapon {
     GLOCK("Glock", 40, 0, false),
     JAVELIN("Javelin", 40, 0, false),
     SWORD("Sword", 40, 20, true);
-    
+
 	private String name;
     private double attackPoints, defencePoints;
     private boolean sharp;
@@ -21,10 +21,6 @@ public enum Weapon {
         this.attackPoints = attackPoints;
         this.defencePoints = defencePoints;
         this.sharp = sharp;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     public double getAttackPoints() {

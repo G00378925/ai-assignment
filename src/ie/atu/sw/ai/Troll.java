@@ -1,5 +1,7 @@
 package ie.atu.sw.ai;
 
+import java.util.function.Function;
+
 import jhealy.aicme4j.NetworkBuilderFactory;
 import jhealy.aicme4j.net.*;
 
@@ -9,6 +11,9 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     private static final String NN_VALIDATION_PATH = "./resources/neural/troll_validation.csv";
     
     private static NeuralNetwork nn;
+    
+    private static final Function<Double, Double> denormalise =
+            (trollResponse) -> ((trollResponse + 1) / 2) * 65;
     
     public static void loadNeuralNetwork(boolean forceNNRebuild) throws Exception {
         nn = loadNN(NN_PATH);
@@ -23,10 +28,10 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
         
         nn = NetworkBuilderFactory.getInstance().newNetworkBuilder()
             .inputLayer("Input", data[0].length)
-            .hiddenLayer("Hidden", Activation.RELU, 16)
-            .hiddenLayer("Hidden", Activation.TANH, 8)
+            .hiddenLayer("Hidden", Activation.RELU, 6)
+            .hiddenLayer("Hidden", Activation.TANH, 4)
             .outputLayer("Output", Activation.LINEAR, expected[0].length)
-            .train(data, expected, 0.001, 0.95, 100000, 0.001, Loss.MSE)
+            .train(data, expected, 0.001, 0.99, 10000, 0.001, Loss.MSE)
             .save(NN_PATH)
             .build();
         
@@ -34,13 +39,15 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     }
     
     public static void validate() {
-        double[][][] trainingData = GameCharacterNN.loadCSVData(NN_VALIDATION_PATH, 2, 1);
+        System.out.println(ConsoleColour.PURPLE + "Validating Troll . . ." + ConsoleColour.RESET);
+
+        double[][][] trainingData = GameCharacterNN.loadCSVData(NN_VALIDATION_PATH, 2, 2);
         double[][] data = trainingData[0], expected = trainingData[1];
         
         Aicme4jUtils.normalise(data, -1, 1);
         Aicme4jUtils.normalise(expected, -1, 1);
         
-        validate(nn, data, expected, 0.2);
+        validate(nn, data, expected, 0.1);
     }
 
     public Troll(Location location) {
@@ -53,11 +60,12 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     
     public void fight(Weapon weapon, Player opponent) {
         this.causeDamage(weapon.getAttackPoints(), opponent);
+        if (!this.isAlive()) return;
         
         double result[] = process(nn, getWeaponInput(weapon), Output.NUMERIC);
-        double punch = ((result[0] + 1) / 2) * 65, kick = ((result[1] + 1) / 2) * 65;
+        double trollPunch = denormalise.apply(result[0]), trollKick = denormalise.apply(result[1]);
         
-        opponent.causeDamage(punch);
-        opponent.causeDamage(kick);
+        opponent.causeDamage(trollPunch);
+        opponent.causeDamage(trollKick);
     }
 }

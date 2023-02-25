@@ -100,12 +100,13 @@ public class Menu {
                     break;
                 }
                 case "FIGHT": {
-                    if (input.length < 2) {
+                    if (input.length < 4) {
                         System.err.println("FIGHT must be followed with the characters name.");
+                        System.err.println("Correct syntax: FIGHT GOBLIN WITH SWORD");
                         break;
                     }
 
-                    player.fight(input[1]);
+                    player.fight(input[1], input[3]);
                     break;
                 }
                 case "GET": {

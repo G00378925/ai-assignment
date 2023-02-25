@@ -12,8 +12,6 @@ public class Player {
     public Player(Location currentLocation, double health) {
         this.currentLocation = currentLocation;
         this.health = health;
-        
-        this.weapons.put("Glock", Weapon.GLOCK);
     }
     
     public void giveItem(Item item) {
@@ -41,28 +39,30 @@ public class Player {
         var weapons = currentLocation.getWeapons().elements();
         System.out.print("Weapons: ");
         for (Weapon weapon : Collections.list(weapons))
-        	System.out.printf("%s ", weapon.getName());
+        	System.out.printf("%s ", weapon.toString());
         System.out.println();
     }
 
     public void get(String objName) {
-        Item item = currentLocation.getItems().get(objName);
-        Weapon weapon = currentLocation.getWeapons().get(objName);
+        Item item = currentLocation.getItems().get(objName.toUpperCase());
+        Weapon weapon = currentLocation.getWeapons().get(objName.toUpperCase());
         
         if (item != null) {
-        	currentLocation.getItems().remove(item);
-        	this.items.put(item.toString(), item);
+        	System.out.printf("You recieved: %s\n", item.toString());
+        	currentLocation.getItems().remove(item.toString().toUpperCase());
+        	this.items.put(item.toString().toUpperCase(), item);
         }
         
         if (weapon != null) {
-        	currentLocation.getWeapons().remove(weapon);
-        	this.weapons.put(objName.toString(), weapon);
+        	System.out.printf("You recieved: %s\n", weapon.toString());
+        	currentLocation.getWeapons().remove(weapon.toString().toUpperCase());
+        	this.weapons.put(weapon.toString().toUpperCase(), weapon);
         }
     }
 
-    public void fight(String enemyName) {
+    public void fight(String enemyName, String weaponName) {
     	GameCharacterable enemy = currentLocation.getEnemies().get(enemyName);
-    	Weapon weapon = this.weapons.get("Glock");
+    	Weapon weapon = this.weapons.get(weaponName.toUpperCase());
 
     	if (weapon == null && enemy != null) {
     		System.out.printf("The %s looks in confusion, and asks where is your weapon?\n", enemy.getName());
