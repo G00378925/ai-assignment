@@ -1,16 +1,16 @@
 package ie.atu.sw.ai;
 
 public enum Weapon {
-    AK47("AK47", 100, 0, false),
-    AR15("AR15", 80, 0, false),
-    AXE("Axe", 0, 0, true),
+    AK47("AK47", 100, 25, false),
+    AR15("AR15", 80, 35, false),
+    AXE("Axe", 55, 22, true),
     BATTON("Batton", 10, 50, false),
-    CROSSBOW("Crossbow", 40, 0, true),
+    CROSSBOW("Crossbow", 40, 10, true),
     C4("C4", 100, 0, false),
     FLAMETHROWER("FlameThrower", 60, 0, false),
-    GLOCK("Glock", 40, 0, false),
-    JAVELIN("Javelin", 40, 0, false),
-    SWORD("Sword", 40, 20, true);
+    GLOCK("Glock", 40, 10, false),
+    JAVELIN("Javelin", 10, 50, false),
+    SWORD("Sword", 60, 60, true);
 
 	private String name;
     private double attackPoints, defencePoints;

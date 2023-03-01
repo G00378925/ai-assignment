@@ -16,11 +16,11 @@ public class Location {
     };
 
     private static Item LOCATION_ITEMS[][] = {
-        {Item.BEETROOT, Item.CARROT},
-        {Item.BEETROOT, Item.CARROT},
-        {Item.BEETROOT, Item.CARROT},
-        {Item.BEETROOT, Item.CARROT},
-        {Item.BEETROOT, Item.CARROT}
+        {Item.APPLE, Item.BEETROOT},
+        {Item.BLUEBREAD, Item.CARROT},
+        {Item.GRAPEFRUIT, Item.PEAR},
+        {Item.PINEAPPLE, Item.POTATO},
+        {Item.ROTTENPOTATO, Item.TURNIP}
     };
 
     private static Weapon LOCATION_WEAPONS[][] = {

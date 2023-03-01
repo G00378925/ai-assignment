@@ -99,7 +99,8 @@ public class Menu {
                         player.eat(input[1]);
                     break;
                 }
-                case "FIGHT": {
+                case "FIGHT":
+                case "KILL": {
                     if (input.length < 4) {
                         System.err.println("FIGHT must be followed with the characters name.");
                         System.err.println("Correct syntax: FIGHT GOBLIN WITH SWORD");
@@ -109,7 +110,8 @@ public class Menu {
                     player.fight(input[1], input[3]);
                     break;
                 }
-                case "GET": {
+                case "GET":
+                case "TAKE": {
                     if (input.length < 2) {
                         System.err.println("GET must be followed with the items name.");
                         break;

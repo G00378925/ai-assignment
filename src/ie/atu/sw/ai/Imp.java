@@ -32,7 +32,7 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
                 .inputLayer("Input", data[0].length)
                 .hiddenLayer("Hidden", Activation.LEAKY_RELU, 4)
                 .outputLayer("Output", Activation.LINEAR, expected[0].length)
-                .train(data, expected, 0.001, 0.95, 100000, 0.001, Loss.CEE)
+                .train(data, expected, 0.001, 0.95, 1_000_00, 0.001, Loss.CEE)
                 .save(NN_PATH)
                 .build();
         
@@ -41,8 +41,8 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
     
     public static void validate() {
         System.out.println(ConsoleColour.PURPLE + "Validating Imp . . ." + ConsoleColour.RESET);
+        
         int errorCount = 0;
-
         double[][][] trainingData = GameCharacterNN.loadCSVData(NN_VALIDATION_PATH, 2, 1);
         double[][] data = trainingData[0], expected = trainingData[1];
         Aicme4jUtils.normalise(data, -1, 1);
@@ -50,8 +50,7 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
         for (int i = 0; i < data.length; i++) {
             double index = process(nn, data[i], Output.LABEL_INDEX)[0];
             
-            System.out.print(ConsoleColour.YELLOW);
-            System.err.printf("Input: %.2f %.2f, Output: ", data[i][0], data[i][1]);
+            System.out.printf("Input: %.2f %.2f, Output: ", data[i][0], data[i][1]);
             
             if (index == expected[i][0]) {
             	System.out.print(ConsoleColour.GREEN);
@@ -60,7 +59,7 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
             	errorCount++;
             }
             
-            System.err.printf("%.2f == %.2f" + ConsoleColour.RESET + "\n", expected[i][0], index);
+            System.out.printf("%.2f == %.2f" + ConsoleColour.RESET + "\n", expected[i][0], index);
         }
     	System.out.printf("Error count: %d out of %d\n", errorCount, expected.length);
     }

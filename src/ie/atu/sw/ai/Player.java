@@ -81,13 +81,19 @@ public class Player {
     public void eat(String itemName) {
         Item foodObj = this.items.get(itemName);
 
-        if (foodObj != null && foodObj.isEdible()) {
-            System.out.printf("You have eaten the %s.\n", foodObj.getName());
+        if (foodObj == null) {
+            System.err.printf("You don't have the %s.\n", itemName);
+        } else if (foodObj.isEdible()) {
             this.health += foodObj.getHealthValue();
+            
+        	if (foodObj.getHealthValue() >= 0)
+                System.out.printf("You have eaten the %s.\n", foodObj.getName());
+            else
+            	System.out.printf("The %s poisoned you!\n", foodObj.getName());
+        	
+        	this.items.remove(itemName);
         } else if (!foodObj.isEdible()) {
             System.err.printf("You can't eat the %s.\n", foodObj.getName());
-        } else {
-            System.err.printf("You don't have the %s.\n", itemName);
         }
     }
 

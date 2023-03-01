@@ -70,13 +70,12 @@ public abstract class GameCharacterNN extends GameCharacter {
     }
     
     public static void validate(NeuralNetwork nn, double[][] data, double[][] expected, double tolerance) {
-        int errorCount = 0;
+    	int errorCount = 0, sampleCount = expected.length * expected[0].length;
         
     	for (int i = 0; i < data.length; i++) {
             double[] input = data[i];
             double[] output = process(nn, input, Output.NUMERIC);
             
-            System.out.print(ConsoleColour.YELLOW);
             System.out.print("Input: ");
             for (double num : input)
             	System.out.printf("%.2f, ", num);
@@ -97,7 +96,6 @@ public abstract class GameCharacterNN extends GameCharacter {
             System.out.println(ConsoleColour.RESET);
         }
     	
-    	int sampleCount = expected.length * expected[0].length;
     	System.out.printf("Error count: %d out of %d\n", errorCount, sampleCount);
     }
 }

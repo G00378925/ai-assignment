@@ -18,7 +18,7 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
         nn = loadNN(NN_PATH);
         if (nn != null && !forceNNRebuild) return;
         
-        System.out.println(ConsoleColour.YELLOW + "Training Goblin . . ." + ConsoleColour.RESET);
+        System.out.println(ConsoleColour.PURPLE + "Training Goblin . . ." + ConsoleColour.RESET);
         double[][][] trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
         double[][] data = trainingData[0], expected = trainingData[1];
         
@@ -28,7 +28,7 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
             .inputLayer("Input", data[0].length)
             .hiddenLayer("Hidden", Activation.RELU, 6)
             .outputLayer("Output", Activation.LINEAR, expected[0].length)
-            .train(data, expected, 0.0001, 0.95, 100000, 0.00001, Loss.MSE)
+            .train(data, expected, 0.0001, 0.95, 1_000_00, 0.00001, Loss.MAE)
             .save(NN_PATH)
             .build();
         

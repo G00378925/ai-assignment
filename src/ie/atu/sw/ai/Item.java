@@ -2,8 +2,16 @@ package ie.atu.sw.ai;
 
 public enum Item {
     KEY("Key", false, 0),
-    BEETROOT("Beetroot", true, 0),
-    CARROT("Carrot", true, 0);
+    APPLE("Apple", true, 10),
+    BEETROOT("Beetroot", true, 8),
+    BLUEBREAD("BlueBread", true, -10),
+    CARROT("Carrot", true, 12),
+    GRAPEFRUIT("Grapefruit", true, 5),
+    PEAR("Pear", true, 10),
+    PINEAPPLE("Pineapple", true, 10),
+    POTATO("Potato", true, 10),
+    ROTTENPOTATO("RottenPotato", true, -3),
+    TURNIP("Turnip", true, 10);
 	
 	private String name;
     private boolean edible;

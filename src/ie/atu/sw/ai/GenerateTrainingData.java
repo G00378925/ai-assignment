@@ -10,15 +10,15 @@ public class GenerateTrainingData {
 	};
 
     private static final BiFunction<Double, Double, Double> goblinAttack = 
-        (attack, defence) -> ((attack + defence) * 0.5);
+        (attack, defence) -> ((attack + defence) * 0.75);
 
     private static final BiFunction<Double, Double, Double> impAttack = 
         (attack, defence) -> Math.floor((attack + defence) / 50);
 
     private static final BiFunction<Double, Boolean, Double> trollAttackPunch =
-        (attack, sharp) -> (attack + (sharp ? (attack * 1.5) : 0));
+        (attack, sharp) -> (attack * (sharp ? 0.2 : 0.3));
     private static final BiFunction<Double, Boolean, Double> trollAttackKick =
-        (attack, sharp) -> (attack * 0.65) * (sharp ? 1.25 : 1);
+        (attack, sharp) -> (attack * 0.3) * (sharp ? 1.25 : 1);
 	
     private static void genGoblinTrainingData(PrintWriter pw) {
         pw.println("# Goblin Training Data");
@@ -49,6 +49,11 @@ public class GenerateTrainingData {
 
     private static void genImpTrainingData(PrintWriter pw) {
         pw.println("# Imp Training Data");
+        pw.println("# This is the training data for the Imp.");
+        pw.println("# Imp determine their attack based on the attack and defence of a weapon.");
+        pw.println();
+        pw.println("# 1. Attack, 2. Defence, 3. Output");
+        pw.println("# Output = Math.floor((Attack + Defence) / 50)");
 
         for (double attack = 0; attack < 100; attack += 10) {
             for (double defence = 0; defence <= 100; defence += 10) {
@@ -70,6 +75,13 @@ public class GenerateTrainingData {
 
     private static void genTrollTrainingData(PrintWriter pw) {
         pw.println("# Troll Training Data");
+        pw.println("# This is the training data for the Troll.");
+        pw.println("# Troll determine their punch and kick values,");
+        pw.println("# based on the attack and sharpness of a weapon.");
+        pw.println();
+        pw.println("# 1. Attack, 2. Sharp, 3. Output Punch, 4. Output Kick");
+        pw.println("# OutputPunch = (Attack * (Sharp ? 0.2 : 0.3))");
+        pw.println("# OutputKick = (Attack * 0.3) * (Sharp ? 1.25 : 1)");
 
         for (double attack = 0; attack <= 100; attack += 2) {
             for (int sharp = 0; sharp <= 1; sharp++) {
