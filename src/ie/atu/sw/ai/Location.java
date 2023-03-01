@@ -7,14 +7,16 @@ public class Location {
         "Cave", "Dessert", "Volcano", "Castle", "Laboratory"
     };
 
+    // Descriptions of each location
     private static String LOCATION_DESCRIPTIONS[] = {
-        "Cave filled with blood thirsty bats.",
-        "Dry dessert with nobody for kilometers.",
-        "Volcano filled with bubbling lava.",
-        "Cold castle filled with ghosts.",
-        "Laboratory with leaking boiling flasks."
+        "Cave filled with blood thirsty bats",
+        "Dry dessert with nobody for kilometers",
+        "Volcano filled with bubbling lava",
+        "Cold castle with ghosts",
+        "Laboratory with loads of leaking boiling flasks"
     };
 
+    // Items that can be found in each location
     private static Item LOCATION_ITEMS[][] = {
         {Item.APPLE, Item.BEETROOT},
         {Item.BLUEBREAD, Item.CARROT},
@@ -23,6 +25,7 @@ public class Location {
         {Item.ROTTENPOTATO, Item.TURNIP}
     };
 
+    // Weapons that can be found in each location
     private static Weapon LOCATION_WEAPONS[][] = {
         {Weapon.AK47, Weapon.AR15},
         {Weapon.AXE, Weapon.BATTON},
@@ -32,7 +35,7 @@ public class Location {
     };
 
     private String name, description;
-    private HashMap<String, Location> edges;
+    private HashMap<String, Location> edges; // Locations that are connected to this one
     private boolean isExit, playerHere;
 
     private Dictionary<String, Item> items = new Hashtable<String, Item>();
@@ -52,11 +55,11 @@ public class Location {
     }
     
     public void togglePlayerHere() {
-    	this.playerHere = !this.playerHere;
+        this.playerHere = !this.playerHere;
     }
     
     public boolean isPlayerHere() {
-    	return this.playerHere;
+        return this.playerHere;
     }
 
     public void addEdge(String direction, Location location) {
@@ -64,7 +67,7 @@ public class Location {
     }
 
     public Location getRandomEdge() {
-    	int randomEdgeIndex = new Random().nextInt(this.edges.size());
+        int randomEdgeIndex = new Random().nextInt(this.edges.size());
         return (Location) this.edges.values().toArray()[randomEdgeIndex];
     }
 
@@ -118,7 +121,7 @@ public class Location {
     }
     
     public static Location setupLocationGraph(int maxDepth, Collection<Location> locations) {
-    	return Location.setupLocationGraph(0, maxDepth, locations, null, null);
+        return Location.setupLocationGraph(0, maxDepth, locations, null, null);
     }
     
     public Location() {
@@ -128,11 +131,12 @@ public class Location {
         this.name = LOCATION_NAMES[randomLocationIndex];
         this.description = LOCATION_DESCRIPTIONS[randomLocationIndex];
 
+        // Add the items and weapons to this location
         for (Item item : LOCATION_ITEMS[randomLocationIndex])
             this.items.put(item.toString().toUpperCase(), item);
 
         for (Weapon weapon : LOCATION_WEAPONS[randomLocationIndex])
-        	this.weapons.put(weapon.toString().toUpperCase(), weapon);
+            this.weapons.put(weapon.toString().toUpperCase(), weapon);
         
         this.playerHere = false;
     }
@@ -142,18 +146,18 @@ public class Location {
     }
     
     public String getName() {
-    	return this.name;
+        return this.name;
     }
     
     public Dictionary<String, GameCharacterable> getEnemies() {
-    	return this.enemies;
+        return this.enemies;
     }
     
     public Dictionary<String, Item> getItems() {
-    	return this.items;
+        return this.items;
     }
     
     public Dictionary<String, Weapon> getWeapons() {
-    	return this.weapons;
+        return this.weapons;
     }
 }

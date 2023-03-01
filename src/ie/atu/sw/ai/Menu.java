@@ -2,7 +2,7 @@ package ie.atu.sw.ai;
 
 import java.util.*;
 
-public class Menu {	
+public class Menu {    
     private final Scanner console = new Scanner(System.in);
 
     public static void loadNeuralNetworks(boolean forceNNRebuild) {
@@ -16,9 +16,9 @@ public class Menu {
     }
     
     public void validateNeuralNetworks() {
-    	Goblin.validate();
-    	Imp.validate();
-    	Troll.validate();
+        Goblin.validate();
+        Imp.validate();
+        Troll.validate();
     }
     
     public Menu showMenuHeader() {
@@ -125,11 +125,11 @@ public class Menu {
                     break;
                 }
                 case "TRAIN": {
-                	if (input.length < 2)
-                	    loadNeuralNetworks(true);
-                	else
-                		this.train(input[1]);
-                	break;
+                    if (input.length < 2)
+                        loadNeuralNetworks(true);
+                    else
+                        this.train(input[1]);
+                    break;
                 }
                 case "TELL": {
                     if (input.length < 4)
@@ -140,7 +140,7 @@ public class Menu {
                 }
                 case "VALIDATE": {
                     if (input.length < 2)
-                    	this.validateNeuralNetworks();
+                        this.validateNeuralNetworks();
                     else
                         this.validate(input[1]);
                     break;

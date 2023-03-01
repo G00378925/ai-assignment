@@ -11,22 +11,24 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
     private static NeuralNetwork nn;
     
     private static double[][] genOneHotVector(double[][] expected, int vectorSize) {
-    	double[][] oneHotVector = new double[expected.length][];
-    	for (int i = 0; i < expected.length; i++) {
-    		oneHotVector[i] = new double[vectorSize];
-    		oneHotVector[i][(int) expected[i][0]] = 1;
-    	}
-    	return oneHotVector;
+        // This method will be used to create a one hot vector from an index
+
+        double[][] oneHotVector = new double[expected.length][];
+        for (int i = 0; i < expected.length; i++) {
+            oneHotVector[i] = new double[vectorSize];
+            oneHotVector[i][(int) expected[i][0]] = 1;
+        }
+        return oneHotVector;
     }
 
-    public static void loadNeuralNetwork(boolean forceNNRebuild) throws Exception {    	
+    public static void loadNeuralNetwork(boolean forceNNRebuild) throws Exception {        
         nn = loadNN(NN_PATH);
         if (nn != null && !forceNNRebuild) return;
         
         System.out.println(ConsoleColour.YELLOW + "Training Imp . . ." + ConsoleColour.RESET);
         double[][][] trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
         double[][] data = trainingData[0], expected = genOneHotVector(trainingData[1], 4);
-        Aicme4jUtils.normalise(data, -1, 1);
+        Aicme4jUtils.normalise(data, -1, 1); // Normalise the input data
         
         nn = NetworkBuilderFactory.getInstance().newNetworkBuilder()
                 .inputLayer("Input", data[0].length)
@@ -53,15 +55,15 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
             System.out.printf("Input: %.2f %.2f, Output: ", data[i][0], data[i][1]);
             
             if (index == expected[i][0]) {
-            	System.out.print(ConsoleColour.GREEN);
+                System.out.print(ConsoleColour.GREEN);
             } else {
-            	System.out.print(ConsoleColour.RED);
-            	errorCount++;
+                System.out.print(ConsoleColour.RED);
+                errorCount++;
             }
             
             System.out.printf("%.2f == %.2f" + ConsoleColour.RESET + "\n", expected[i][0], index);
         }
-    	System.out.printf("Error count: %d out of %d\n", errorCount, expected.length);
+        System.out.printf("Error count: %d out of %d\n", errorCount, expected.length);
     }
     
     public Imp(Location location) {
@@ -69,7 +71,7 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
     }
     
     public double[] getWeaponInput(Weapon weapon) {
-    	return new double[] {weapon.getAttackPoints(), weapon.getDefencePoints()};
+        return new double[] {weapon.getAttackPoints(), weapon.getDefencePoints()};
     }
 
     public void fight(Weapon weapon, Player opponent) {
@@ -77,9 +79,9 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
         if (!this.isAlive()) return;
         
         if (this.getHealth() > 0) {
-        	double[] input = getWeaponInput(weapon);
-        	Aicme4jUtils.normalise(input, -1, 1);
-        	
+            double[] input = getWeaponInput(weapon);
+            Aicme4jUtils.normalise(input, -1, 1);
+            
             double attackTier[] = {12.5, 25, 37.5, 50};
             int impRespIndex = (int) process(nn, getWeaponInput(weapon), Output.LABEL_INDEX)[0];
             opponent.causeDamage(attackTier[impRespIndex]);

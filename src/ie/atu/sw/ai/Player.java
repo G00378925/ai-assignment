@@ -15,11 +15,11 @@ public class Player {
     }
     
     public void giveItem(Item item) {
-    	this.items.put(item.toString(), item);
+        this.items.put(item.toString(), item);
     }
 
     public Collection<GameCharacterable> getEnemies() {
-    	return Collections.list(currentLocation.getEnemies().elements());
+        return Collections.list(currentLocation.getEnemies().elements());
     }
 
     public void look() {
@@ -27,19 +27,19 @@ public class Player {
         
         System.out.print("Enemies: ");
         for (GameCharacterable enemy : this.getEnemies())
-        	System.out.printf("%s ", enemy.getName());
+            System.out.printf("%s ", enemy.getName());
         System.out.println();
         
         var items = currentLocation.getItems().elements();
         System.out.print("Items: ");
         for (Item item : Collections.list(items))
-        	System.out.printf("%s ", item.getName());
+            System.out.printf("%s ", item.getName());
         System.out.println();
 
         var weapons = currentLocation.getWeapons().elements();
         System.out.print("Weapons: ");
         for (Weapon weapon : Collections.list(weapons))
-        	System.out.printf("%s ", weapon.toString());
+            System.out.printf("%s ", weapon.toString());
         System.out.println();
     }
 
@@ -48,28 +48,28 @@ public class Player {
         Weapon weapon = currentLocation.getWeapons().get(objName.toUpperCase());
         
         if (item != null) {
-        	System.out.printf("You recieved: %s\n", item.toString());
-        	currentLocation.getItems().remove(item.toString().toUpperCase());
-        	this.items.put(item.toString().toUpperCase(), item);
+            System.out.printf("You recieved: %s\n", item.toString());
+            currentLocation.getItems().remove(item.toString().toUpperCase());
+            this.items.put(item.toString().toUpperCase(), item);
         }
         
         if (weapon != null) {
-        	System.out.printf("You recieved: %s\n", weapon.toString());
-        	currentLocation.getWeapons().remove(weapon.toString().toUpperCase());
-        	this.weapons.put(weapon.toString().toUpperCase(), weapon);
+            System.out.printf("You recieved: %s\n", weapon.toString());
+            currentLocation.getWeapons().remove(weapon.toString().toUpperCase());
+            this.weapons.put(weapon.toString().toUpperCase(), weapon);
         }
     }
 
     public void fight(String enemyName, String weaponName) {
-    	GameCharacterable enemy = currentLocation.getEnemies().get(enemyName);
-    	Weapon weapon = this.weapons.get(weaponName.toUpperCase());
+        GameCharacterable enemy = currentLocation.getEnemies().get(enemyName);
+        Weapon weapon = this.weapons.get(weaponName.toUpperCase());
 
-    	if (weapon == null && enemy != null) {
-    		System.out.printf("The %s looks in confusion, and asks where is your weapon?\n", enemy.getName());
-    		System.out.println("They want a fair fight, so you must acquire a weapon first.");
-    		return;
-    	}
-    	
+        if (weapon == null && enemy != null) {
+            System.out.printf("The %s looks in confusion, and asks where is your weapon?\n", enemy.getName());
+            System.out.println("They want a fair fight, so you must acquire a weapon first.");
+            return;
+        }
+        
         if (enemy != null) {
             System.out.printf("You are fighting the %s.\n", enemy.getName());
             enemy.fight(weapon, this);
@@ -86,31 +86,31 @@ public class Player {
         } else if (foodObj.isEdible()) {
             this.health += foodObj.getHealthValue();
             
-        	if (foodObj.getHealthValue() >= 0)
+            if (foodObj.getHealthValue() >= 0)
                 System.out.printf("You have eaten the %s.\n", foodObj.getName());
             else
-            	System.out.printf("The %s poisoned you!\n", foodObj.getName());
-        	
-        	this.items.remove(itemName);
+                System.out.printf("The %s poisoned you!\n", foodObj.getName());
+            
+            this.items.remove(itemName);
         } else if (!foodObj.isEdible()) {
             System.err.printf("You can't eat the %s.\n", foodObj.getName());
         }
     }
 
     public void tell(String commands[]) {
-    	GameCharacterable enemy = currentLocation.getEnemies().get(commands[1]);
-        String objName = commands[3];   	
+        GameCharacterable enemy = currentLocation.getEnemies().get(commands[1]);
+        String objName = commands[3];       
  
-    	switch (commands[2]) {
-    	    case "POUR": {
-    	    	enemy.pour(objName);
-    		    break;
-    	    }
-    	    default: {
-    	    	System.err.printf("I don't have the ability to do %s.\n", objName);
-    	    	break;
-    	    }
-    	}
+        switch (commands[2]) {
+            case "POUR": {
+                enemy.pour(objName);
+                break;
+            }
+            default: {
+                System.err.printf("I don't have the ability to do %s.\n", objName);
+                break;
+            }
+        }
     }
 
     public boolean isValidMove(String direction) {
@@ -118,18 +118,18 @@ public class Player {
     }
     
     public void move(String direction) {
-    	Location newLocation = currentLocation.getEdges().get(direction);
-    	if (newLocation.isExit()) {
+        Location newLocation = currentLocation.getEdges().get(direction);
+        if (newLocation.isExit()) {
             if (this.items.get(Item.KEY.toString()) != null) {
-            	System.out.println("You won.");
-            	System.exit(0);
+                System.out.println("You won.");
+                System.exit(0);
             } else {
-            	System.err.println("You need the key to unlock.");
-            	return;
+                System.err.println("You need the key to unlock.");
+                return;
             }
-    	}
+        }
 
-    	this.currentLocation.togglePlayerHere();
+        this.currentLocation.togglePlayerHere();
         this.currentLocation = newLocation;
         this.currentLocation.togglePlayerHere();
         
@@ -137,12 +137,12 @@ public class Player {
     }
 
     public void causeDamage(double damage) {
-    	System.out.printf("Player has taken %.2f damage.\n", damage);
+        System.out.printf("Player has taken %.2f damage.\n", damage);
         this.health -= damage;
         
         if (this.health < 0) {
-        	System.err.println("You died.");
-        	System.exit(0);
+            System.err.println("You died.");
+            System.exit(0);
         }
     }
 }

@@ -1,6 +1,7 @@
 package ie.atu.sw.ai;
 
 public enum Weapon {
+    // All the weapons and their values
     AK47("AK47", 100, 25, false),
     AR15("AR15", 80, 35, false),
     AXE("Axe", 55, 22, true),
@@ -12,9 +13,9 @@ public enum Weapon {
     JAVELIN("Javelin", 10, 50, false),
     SWORD("Sword", 60, 60, true);
 
-	private String name;
-    private double attackPoints, defencePoints;
-    private boolean sharp;
+    private String name; // Name of the weapon
+    private double attackPoints, defencePoints; // Points of the weapon
+    private boolean sharp; // Is weapon sharp?
 
     private Weapon(String name, int attackPoints, int defencePoints, boolean sharp) {
         this.name = name;
@@ -32,7 +33,7 @@ public enum Weapon {
     }
     
     public boolean isSharp() {
-    	return this.sharp;
+        return this.sharp;
     }
 
     public String toString() {

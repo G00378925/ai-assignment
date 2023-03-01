@@ -18,7 +18,7 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
         nn = loadNN(NN_PATH);
         if (nn != null && !forceNNRebuild) return;
         
-        System.out.println(ConsoleColour.PURPLE + "Training Goblin . . ." + ConsoleColour.RESET);
+        System.out.println(ConsoleColour.YELLOW + "Training Goblin . . ." + ConsoleColour.RESET);
         double[][][] trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
         double[][] data = trainingData[0], expected = trainingData[1];
         
@@ -40,7 +40,7 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
 
         var trainingData = GameCharacterNN.loadCSVData(NN_VALIDATION_PATH, 2, 1);
         Aicme4jUtils.normalise(trainingData[0], 0, 1);
-        validate(nn, trainingData[0], trainingData[1], 2);
+        validate(nn, trainingData[0], trainingData[1], 2); // Tolerance of 2
     }
     
     public Goblin(Location location) {
@@ -48,9 +48,10 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
     }
     
     public double[] getWeaponInput(Weapon weapon) {
-    	return new double[] {
-    		weapon.getAttackPoints(), weapon.getDefencePoints()
-    	};
+        // Generate the weapons input array to the NN
+        return new double[] {
+            weapon.getAttackPoints(), weapon.getDefencePoints()
+        };
     }
     
     public void fight(Weapon weapon, Player opponent) {
@@ -58,11 +59,11 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
         if (!this.isAlive()) return;
         
         if (this.getHealth() > 0) {
-        	double[] input = getWeaponInput(weapon);
-        	Aicme4jUtils.normalise(input, 0, 1);
-        	
+            double[] input = getWeaponInput(weapon);
+            Aicme4jUtils.normalise(input, 0, 1); // Normalise the values of the weapon input
+            
             var goblinResponse = process(nn, input, Output.NUMERIC)[0];
-            goblinResponse -= weapon.getDefencePoints();
+            goblinResponse -= weapon.getDefencePoints(); // Deduct the defence of the weapon
             goblinResponse = goblinResponse < 0 ? 0 : goblinResponse;
             
             opponent.causeDamage(goblinResponse);

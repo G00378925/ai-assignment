@@ -5,21 +5,28 @@ import java.io.PrintWriter;
 import java.util.function.BiFunction;
 
 public class GenerateTrainingData {
-	private static final String[] GC_NAMES = {
+    // These are the names of the game characters/enemies.
+    private static final String[] GC_NAMES = {
         "Goblin", "Imp", "Troll"
-	};
+    };
 
+    // This the function that the goblin will be learning.
     private static final BiFunction<Double, Double, Double> goblinAttack = 
         (attack, defence) -> ((attack + defence) * 0.75);
 
+    // Imp will be learning this one.
     private static final BiFunction<Double, Double, Double> impAttack = 
         (attack, defence) -> Math.floor((attack + defence) / 50);
 
+    // And the troll will be learning these two
+    // First output value will the trollAttackPunch
+    // And the second will be the trollAttackKick
     private static final BiFunction<Double, Boolean, Double> trollAttackPunch =
         (attack, sharp) -> (attack * (sharp ? 0.2 : 0.3));
     private static final BiFunction<Double, Boolean, Double> trollAttackKick =
         (attack, sharp) -> (attack * 0.3) * (sharp ? 1.25 : 1);
-	
+
+    // The next 6 functions will produce the datasets for training and validation.
     private static void genGoblinTrainingData(PrintWriter pw) {
         pw.println("# Goblin Training Data");
         pw.println("# This is the training data for the Goblin.");
@@ -29,7 +36,7 @@ public class GenerateTrainingData {
         pw.println("# 1. Attack, 2. Defence, 3. Output");
         pw.println("# Output = (Attack + Defence) * 0.75");
         
-    	for (double attack = 0; attack <= 100; attack += 10) {
+        for (double attack = 0; attack <= 100; attack += 10) {
             for (double defence = 0; defence <= 100; defence += 10) {
                 double output = goblinAttack.apply(attack, defence);
                 pw.printf("%.0f, %.0f, %.2f\n", attack, defence, output);
@@ -40,7 +47,7 @@ public class GenerateTrainingData {
     private static void genGoblinValidationData(PrintWriter pw) {
         pw.println("# Goblin Validation Data");
 
-    	for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             double attack = Math.random() * 100, defence = Math.random() * 100;
             double output = goblinAttack.apply(attack, defence);
             pw.printf("%f, %f, %f\n", attack, defence, output);
@@ -105,21 +112,22 @@ public class GenerateTrainingData {
     }
 
     public static void generateTrainingData(String path) throws Exception {
-    	for (int i = 0; i < GC_NAMES.length; i++) {
-    		String gameCharacterName = GC_NAMES[i].toLowerCase();
+        // Iterate through all the characters
+        for (int i = 0; i < GC_NAMES.length; i++) {
+            String gameCharacterName = GC_NAMES[i].toLowerCase();
 
             var trainingOS = new FileOutputStream(path + gameCharacterName + "_training.csv");
-    		var trainingPW = new PrintWriter(trainingOS);
+            var trainingPW = new PrintWriter(trainingOS);
 
             var validationOS = new FileOutputStream(path + gameCharacterName + "_validation.csv");
             var validationPW = new PrintWriter(validationOS);
-    		
-    		switch (i) {
-    		    case 0: {
-    		    	genGoblinTrainingData(trainingPW);
+            
+            switch (i) {
+                case 0: {
+                    genGoblinTrainingData(trainingPW);
                     genGoblinValidationData(validationPW);
                     break;
-    		    }
+                }
                 case 1: {
                     genImpTrainingData(trainingPW);
                     genImpValidationData(validationPW);
@@ -130,13 +138,14 @@ public class GenerateTrainingData {
                     genTrollValidationData(validationPW);
                     break;
                 }
-    		}
+            }
 
             trainingPW.close();
             trainingOS.close();
 
+            // Close the file descriptors
             validationPW.close();
             validationOS.close();
-    	}
+        }
     }
 }
