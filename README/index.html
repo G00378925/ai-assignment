@@ -25,10 +25,21 @@
     allowing multiple instances of each character without having to retrain each instance.
     <br><br>
 
+    The purpose of the neural networks is to determine the attack values of the characters, using the weapon attributes has input.
+    Using the command: <span style="color: red">FIGHT GOBLIN WITH WEAPON_NAME</span>, you can fight a character.
+    You must make sure you have a weapon first, check the current location weapons using <span style="color: red">LOOK</span>.
+    Find a weapon that is listed as present, use the <span style="color: red">GET WEAPON_NAME</span> to retrieve it.
+    If an enemy character isn't at your current location, move to other locations using
+    <span style="color: red">WEST</span>, <span style="color: red">NORTH</span> . . .
+    (the current enemies at that location, are shown before the prompt symbol <span>></span>.
+    <br><br>
+
     When running the game, you can use the command <span style="color: red">TRAIN</span> to train all the neural networks
-    or <span style="color: red">TRAIN GOBLIN</span> to train a specific character.
-    Trained neural networks are automatically saved to the <span>./resources/neural</span> directory,
-    where they will be loaded at game startup; if these do not already exist, each character will be trained automatically.
+    or <span style="color: red">TRAIN ENEMY_NAME</span> to train a specific character.
+    Trained neural networks are automatically saved to the <span>./resources/neural</span> directory.
+
+    Adjusting the variable <span>FORCE_RETRAIN_ON_START</span> in the Runner, will force the NNs to be trained automatically on the start of the game,
+    or disable it, allowing you to load pretrained NNs.
     <br><br>
 
     The <span>GenerateTrainingData</span> class generates training data for each character and stores it in
@@ -37,11 +48,12 @@
     Neural networks can become too familiar with the training data, so I'm also generating some validation data
     that the neural networks haven't seen. This is put in the same directory as the training data.
     You can test the validation data on all characters using the <span style="color: red">VALIDATE</span> command,
-    or on a specific character using <span style="color: red">VALIDATE IMP</span>.
+    or on a specific character using <span style="color: red">VALIDATE ENEMY_NAME</span>.
     <br><br>
+
     Each character has a tolerance range of error when checking the validation data,
     <span>Goblin: 2</span>,
-    <span>Troll: 0.05</span> and the <span>Imp</span> is absolute, integer checking.
+    <span>Troll: 0.05</span> and the <span>Imp</span> is absolute integer checking.
 
     I'm using this as a metric to determine the best loss function to use for the regression characters (<span>Goblin</span> and <span>Troll</span>).
     I've had success with the MAE for the Goblin and the MSE for the Troll.
@@ -52,6 +64,7 @@
     but the only difference is that input values are randomly generated.
     <br><br>
 
+    <br><br><br><br><br><br><br><br><br><br><br>
     <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
     <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
     <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
@@ -82,12 +95,12 @@
     &nbsp&nbsp&nbsp&nbsp(attack, defence) -&gt; ((attack + defence) * 0.75);</span>
     <br><br>
 
-    I found the NN struggled with the validation data, until I normalised the input values,
+    The NN struggled with the validation data, until I normalised the input values,
     I normalised them between <span>0</span> and <span>1</span>.
     I used ReLU because its quick, and it fit the problem, being regression.
     <br><br>
 
-    Deciding on a loss function based on the amount of epochs it took to train was a bad metric;
+    Deciding on a loss function, based on the amount of epochs it took to train, was a bad metric;
     as I've said above, generating correct values for unseen data is more favorable,
     plus you only have to train a network once, so epoch count shouldn't be taken into account.
 
@@ -163,7 +176,7 @@
 
     <br><strong>Validation Data:</strong><br>
     To produce the validation data I randomly generated values in the range of the attack and defence,
-    and put it into the <span>goblinAttack</span> function and the output is noted,
+    and put them into the <span>goblinAttack</span> function and noted the output,
     this is done <span>100</span> times.
     Validation data for the <span>Imp</span> and <span>Troll</span> is generated using the same technique.
     <br><br>
@@ -224,7 +237,7 @@
     <strong>Training/Validation Data:</strong><br>
     The training/validation data generated the same way as the Goblin,
     only difference is the function it calls being <span>impAttack</span>,
-    this returns the index, that will be turned into a one hot vector during training.
+    this returns an index, that will be turned into one hot vectors during training.
     <br><br>
 
     First 10 records of the generated training data (<span>imp_training.csv</span>):<br>
@@ -243,6 +256,7 @@
     ...<br>
     </span>
    
+    <br><br><br><br><br><br>
     <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
     <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
     <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
@@ -287,6 +301,7 @@
     <br><br>
 
     I've tried swapping the positions of each of the activator functions, and found this configuration works best.
+    The tanh is a non-linear function, this is useful in learning complex problems like this one.
     <br><br>
 
     <strong>Training Data:</strong><br>
