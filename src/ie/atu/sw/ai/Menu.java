@@ -72,6 +72,8 @@ public class Menu {
 
     public void go(Player player) throws Exception {
         while (true) {
+            // Print all the enemies at the current location
+            // before the prompt character
             for (int i = 0; i < player.getEnemies().size(); i++) {
                 GameCharacterable enemy = (new ArrayList<>(player.getEnemies())).get(i);
                 System.out.print(enemy.getName());
@@ -79,11 +81,13 @@ public class Menu {
                     System.out.print(", ");
             }
             System.out.print("> ");
-
+            
+            // Split the input by whitespace, this includes spaces and tabs
             String[] input = console.nextLine().strip().split("\\s+");
             for (int i = 0; i < input.length; i++)
                 input[i] = input[i].toUpperCase();
-
+            
+            // Extract the first word in the command
             String command = input[0];
             if (command.length() == 0)
                 continue;
@@ -133,7 +137,7 @@ public class Menu {
                 }
                 case "TELL": {
                     if (input.length < 4)
-                        System.err.println("Correct syntax: TELL GOBLIN POUR ALE");
+                        System.err.println("Correct syntax: TELL ENEMY_NAME POUR ALE");
                     else
                         player.tell(input);
                     break;
@@ -148,6 +152,7 @@ public class Menu {
                 default: {
                     if (player.isValidMove(command)) {
                         player.move(command);
+                        player.look();
                     } else {
                         System.err.println("\"" + command + "\" is not a valid move/command.");
                     }

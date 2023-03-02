@@ -23,6 +23,8 @@ public class Player {
     }
 
     public void look() {
+    	// This method gives you a description of the current location
+    	// the player is currently at
         System.out.println(currentLocation.getDescription());
         
         System.out.print("Enemies: ");
@@ -44,6 +46,9 @@ public class Player {
     }
 
     public void get(String objName) {
+    	// Allows you retrieve a weapon such as an item or weapon
+    	// by its name
+    	
         Item item = currentLocation.getItems().get(objName.toUpperCase());
         Weapon weapon = currentLocation.getWeapons().get(objName.toUpperCase());
         
@@ -61,6 +66,7 @@ public class Player {
     }
 
     public void fight(String enemyName, String weaponName) {
+    	// Fight an enemy at the current location, with a specified weapon name.
         GameCharacterable enemy = currentLocation.getEnemies().get(enemyName);
         Weapon weapon = this.weapons.get(weaponName.toUpperCase());
 
@@ -118,6 +124,8 @@ public class Player {
     }
     
     public void move(String direction) {
+    	// This method will move the player in the specified the direction.
+    	
         Location newLocation = currentLocation.getEdges().get(direction);
         if (newLocation.isExit()) {
             if (this.items.get(Item.KEY.toString()) != null) {

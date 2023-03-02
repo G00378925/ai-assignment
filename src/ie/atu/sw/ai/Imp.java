@@ -82,6 +82,8 @@ public class Imp extends GameCharacterNN implements GameCharacterable {
             double[] input = getWeaponInput(weapon);
             Aicme4jUtils.normalise(input, -1, 1);
             
+            // The imp will have tiers of attack
+            // These will be identified using classification
             double attackTier[] = {12.5, 25, 37.5, 50};
             int impRespIndex = (int) process(nn, getWeaponInput(weapon), Output.LABEL_INDEX)[0];
             opponent.causeDamage(attackTier[impRespIndex]);

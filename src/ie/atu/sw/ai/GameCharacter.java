@@ -1,12 +1,12 @@
 package ie.atu.sw.ai;
 
 public abstract class GameCharacter implements Runnable {
-    private Location location; // Where the character is
-    private String name; // Name of the character
-    private ConsoleColour consoleColour; // Colour of the character
+    private Location location; // Where the character currently is.
+    private String name; // Name of the character.
+    private ConsoleColour consoleColour; // Colour of the character.
 
     private double health = 100; // All game characters start with 100 health
-    private boolean alive = true;
+    private boolean alive = true; // Other threads will check this value
 
     public GameCharacter(Location location, String name, ConsoleColour consoleColour) {
         this.location = location;
@@ -21,12 +21,14 @@ public abstract class GameCharacter implements Runnable {
         // If not alive return
         if (!alive) return;
         do {
+            // Pick a random direction and go there
             this.location = this.location.getRandomEdge();
 
-            // If the enemy of the same time is here, move on
+            // If an enemy of the same type is here, move on
             if (this.location.getEnemies().get(name) != null)
                 continue;
-
+            
+            // The enemy will now make itself known
             this.location.getEnemies().put(name, (GameCharacterable) this);
         } while(false);
     }
@@ -48,10 +50,6 @@ public abstract class GameCharacter implements Runnable {
 
     public String getName() {
         return consoleColour + this.name + ConsoleColour.RESET;
-    }
-    
-    public String toString() {
-        return this.name.toUpperCase();
     }
     
     public double getHealth() {
@@ -79,5 +77,9 @@ public abstract class GameCharacter implements Runnable {
 
     public void pour(String objName) {
         System.err.printf("I don't have any %s.\n", objName);
+    }
+    
+    public String toString() {
+        return this.name.toUpperCase();
     }
 }

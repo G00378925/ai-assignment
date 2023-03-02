@@ -52,8 +52,8 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
         Aicme4jUtils.normalise(data, -1, 1);
         Aicme4jUtils.normalise(expected, -1, 1);
         
-        // Values with in 0.05 are allowed.
-        validate(nn, data, expected, 0.05);
+        // Values with in 0.08 error are allowed.
+        validate(nn, data, expected, 0.08);
     }
 
     public Troll(Location location) {

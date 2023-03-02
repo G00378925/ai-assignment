@@ -72,6 +72,7 @@ public class Location {
     }
 
     public static String reverseLocation(String locationStr) {
+    	// This allows us to go back the same direction
         return switch (locationStr.toUpperCase()) {
             case "NORTH" -> "South";
             case "SOUTH" -> "North";
@@ -125,6 +126,7 @@ public class Location {
     }
     
     public Location() {
+    	// Sets up the location object
         this.edges = new HashMap<String, Location>();
 
         int randomLocationIndex = new Random().nextInt(LOCATION_NAMES.length);

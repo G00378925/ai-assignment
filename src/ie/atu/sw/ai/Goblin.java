@@ -11,7 +11,8 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
     private static final String NN_PATH = "./resources/neural/goblin.dat";
     private static final String NN_TRAINING_PATH = "./resources/neural/goblin_training.csv";
     private static final String NN_VALIDATION_PATH = "./resources/neural/goblin_validation.csv";
-
+    
+    // This is the neural network for the Goblin
     private static NeuralNetwork nn;
     
     public static void loadNeuralNetwork(boolean forceNNRebuild) throws Exception {
@@ -22,6 +23,7 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
         double[][][] trainingData = GameCharacterNN.loadCSVData(NN_TRAINING_PATH, 2, 1);
         double[][] data = trainingData[0], expected = trainingData[1];
         
+        // Normalise the input data for the Goblin between the range 0 and 1
         Aicme4jUtils.normalise(data, 0, 1);
 
         nn = NetworkBuilderFactory.getInstance().newNetworkBuilder()

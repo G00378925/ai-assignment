@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.function.BiFunction;
 
+// The purpose of this class is to generate the training and validation data for the characters
 public class GenerateTrainingData {
     // These are the names of the game characters/enemies.
     private static final String[] GC_NAMES = {
@@ -65,6 +66,7 @@ public class GenerateTrainingData {
         for (double attack = 0; attack < 100; attack += 10) {
             for (double defence = 0; defence <= 100; defence += 10) {
                 double output = impAttack.apply(attack, defence);
+                
                 pw.printf("%.0f, %.0f, %.0f\n", attack, defence, output);
             }
         }
@@ -94,6 +96,7 @@ public class GenerateTrainingData {
             for (int sharp = 0; sharp <= 1; sharp++) {
                 double resultPunch = trollAttackPunch.apply(attack, sharp == 1);
                 double resultKick = trollAttackKick.apply(attack, sharp == 1);
+                
                 pw.printf("%.0f, %d, %.2f, %.2f\n", attack, sharp, resultPunch, resultKick);
             }
         }
@@ -115,7 +118,8 @@ public class GenerateTrainingData {
         // Iterate through all the characters
         for (int i = 0; i < GC_NAMES.length; i++) {
             String gameCharacterName = GC_NAMES[i].toLowerCase();
-
+            
+            // Each character will have a training file and a validation file
             var trainingOS = new FileOutputStream(path + gameCharacterName + "_training.csv");
             var trainingPW = new PrintWriter(trainingOS);
 

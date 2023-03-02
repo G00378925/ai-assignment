@@ -53,7 +53,7 @@
 
     Each character has a tolerance range of error when checking the validation data,
     <span>Goblin: 2</span>,
-    <span>Troll: 0.05</span> and the <span>Imp</span> is absolute integer checking.
+    <span>Troll: 0.08</span> and the <span>Imp</span> is absolute integer checking.
 
     I'm using this as a metric to determine the best loss function to use for the regression characters (<span>Goblin</span> and <span>Troll</span>).
     I've had success with the MAE for the Goblin and the MSE for the Troll.
@@ -146,12 +146,13 @@
     Output Damage: <span>n >= 0</span> and <span>n <= 150</span><br>
     <br>
 
-    This is the code used to produce the training data:<br>
+    The code below is used to produce the training data.
+    It iterates through the possible input values of attack and defence in steps of <span>5</span>.<br>
     <span>
     for (double attack = 0; attack <= 100; attack += 5) {<br>
     &nbsp&nbsp&nbsp&nbspfor (double defence = 0; defence <= 100; defence += 5) {<br>
     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdouble output = goblinAttack.apply(attack, defence);<br><br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspSystem.out.printf("%.0f, %.0f, %.2f\n",<br>
+    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsppw.printf("%.0f, %.0f, %.2f\n",<br>
     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspattack, defence, output);<br>
     &nbsp&nbsp&nbsp&nbsp}<br>
     }<br>
@@ -208,6 +209,7 @@
     This value is divided by <span>50</span>, and the floor division can have <span>4</span> possible
     values (<span>0</span>, <span>1</span>, <span>2</span> and <span>3</span>).
     Each of these values equates to a tier of attack from the Imp.
+    These values being <span>{12.5, 25, 37.5, 50}</span>, the output of the NN will be the index.
     <br><br>
 
     <span>private static final BiFunction&lt;Double, Double, Double&gt; impAttack = <br>
@@ -312,7 +314,12 @@
     1. Output Kick Damage: <span>n >= 0</span> and <span>n <= 37.5</span><br>
     <br>
 
-    This is the code used to produce the training data:<br>
+    This is the code used to produce the training data.
+    Similar to the previous enemies above,
+    this is generating the possible inputs/outputs by iterating through the range of the inputs.
+    Notice steps of <span>2</span> this time for attack, this is due to the complexity of the problem, which requires more training data.
+    Sharp is a boolean value, being true or false.
+    <br>
     <span>
     for (double attack = 0; attack <= 100; attack += 2) {<br>
     &nbsp&nbsp&nbsp&nbspfor (int sharp = 0; sharp <= 1; sharp++) {<br>
@@ -320,7 +327,7 @@
     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsptrollAttackPunch.apply(attack, sharp == 1);<br>
     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdouble resultKick = <br>
     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsptrollAttackKick.apply(attack, sharp == 1);<br><br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspSystem.out.printf("%.0f, %d, %.2f, %.2f\n",<br>
+    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsppw.printf("%.0f, %d, %.2f, %.2f\n",<br>
     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspattack, sharp, resultPunch, resultKick);<br>
     &nbsp&nbsp&nbsp&nbsp}<br>
     }<br>

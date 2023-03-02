@@ -46,14 +46,16 @@ public abstract class GameCharacterNN extends GameCharacter {
 
                 double[] _input = new double[inputSize];
                 double[] _output = new double[outputSize];
-
+                
+                // Add the read values into the input arrays
                 for (int i = 0; i < inputSize; i++) _input[i] = values[i];
                 for (int i = 0; i < outputSize; i++) _output[i] = values[inputSize + i];
 
                 inputAL.add(_input);
                 outputAL.add(_output);
             }
-
+            
+            // Close the descriptors
             scanner.close();
             fileReader.close();
         } catch (Exception e) {
@@ -80,7 +82,8 @@ public abstract class GameCharacterNN extends GameCharacter {
     }
     
     public static void validate(NeuralNetwork nn, double[][] data, double[][] expected, double tolerance) {
-        int errorCount = 0, sampleCount = expected.length * expected[0].length;
+        // Error count can be used to determine the best loss function to use
+    	int errorCount = 0, sampleCount = expected.length * expected[0].length;
         
         for (int i = 0; i < data.length; i++) { // Iterate through the validation data
             double[] input = data[i]; // Pass input into the NN

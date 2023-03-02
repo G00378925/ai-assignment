@@ -6,6 +6,10 @@ import java.util.concurrent.*;
 public class Runner {
     private static final int MAX_DEPTH = 2, MAX_NUM_OF_CHARACTERS = 40;
     private static final double INITIAL_PLAYER_HEALTH = 100.0;
+    
+    // Force retrain on game start, is not needed as
+    // these are cached in the ./resources/neural directory
+    private static final boolean FORCE_RETRAIN_ON_START = true;
 
     private Collection<GameCharacterable> characters =
             new ArrayList<GameCharacterable>(); // All enemies in the game
@@ -47,7 +51,7 @@ public class Runner {
     private void go(String[] args) throws Exception {
         // Generate the training data and load in the neural networks.
         GenerateTrainingData.generateTrainingData("./resources/neural/");
-        Menu.loadNeuralNetworks(false);
+        Menu.loadNeuralNetworks(FORCE_RETRAIN_ON_START);
         
         // Generate the location graph, add player to middle of the graph
         Location location = Location.setupLocationGraph(MAX_DEPTH, this.locations);
