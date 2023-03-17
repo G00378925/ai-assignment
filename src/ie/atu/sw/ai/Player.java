@@ -14,6 +14,10 @@ public class Player {
         this.health = health;
     }
     
+    public double getHealth() {
+    	return this.health;
+    }
+    
     public void giveItem(Item item) {
         this.items.put(item.toString(), item);
     }
@@ -109,7 +113,7 @@ public class Player {
  
         switch (commands[2]) {
             case "POUR": {
-                enemy.pour(objName);
+                enemy.pour(objName, this);
                 break;
             }
             default: {
@@ -118,8 +122,21 @@ public class Player {
             }
         }
     }
+    
+    public void inventory() {
+        System.out.print("Items: ");
+        for (Item item : Collections.list(items.elements()))
+            System.out.printf("%s ", item.getName());
+        System.out.println();
+
+        System.out.print("Weapons: ");
+        for (Weapon weapon : Collections.list(weapons.elements()))
+            System.out.printf("%s ", weapon.toString());
+        System.out.println();
+    }
 
     public boolean isValidMove(String direction) {
+    	// Check if direction is a valid key
         return currentLocation.getEdges().containsKey(direction);
     }
     
@@ -143,7 +160,7 @@ public class Player {
         
         System.out.printf("You have now entered the %s.\n", currentLocation.getName());
     }
-
+    
     public void causeDamage(double damage) {
         System.out.printf("Player has taken %.2f damage.\n", damage);
         this.health -= damage;

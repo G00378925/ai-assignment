@@ -1,12 +1,52 @@
 package ie.atu.sw.ai;
 
-public class Dragon extends GameCharacterFL implements GameCharacterable {
-    // The dragon will use fuzzy logic.
+import net.sourceforge.jFuzzyLogic.FIS;
 
+public class Dragon extends GameCharacter implements GameCharacterable {
+    private static final String FCL_PATH = "./resources/fuzzy/dragon.fcl";
+
+    private static FIS fis;
+    
+    private int bloodAlcoholLevel;
+
+    public static void loadFuzzyLogic() {
+        fis = FIS.load(FCL_PATH);
+    }
+    
     public Dragon(Location location) {
         super(location, "Dragon", ConsoleColour.RED);
+        
+        // Setting the initial BAC
+        this.bloodAlcoholLevel = 0;
     }
 
     public void fight(Weapon weapon, Player opponent) {
+        this.causeDamage(weapon.getAttackPoints(), opponent);
+        if (!this.isAlive()) return; // Check if the Dragon is alive
+    	
+    	fis.setVariable("attack", weapon.getAttackPoints());
+    	fis.setVariable("opponentHealth", opponent.getHealth());
+    	fis.setVariable("bloodAlcoholLevel", this.bloodAlcoholLevel);
+    	fis.evaluate();
+    	
+    	// Fetch the output attackResponse
+    	double damage = fis.getVariable("attackResponse").getValue();
+    	opponent.causeDamage(damage);
+    }
+    
+    public void pour(String objName, Player opponent) {
+    	if (this.bloodAlcoholLevel > 80) {
+    		System.err.println(this.getName() + ": Stop thats enough!");
+    		return;
+    	}
+    	
+        this.bloodAlcoholLevel += switch (objName) {
+            case "ALE" -> 4;
+            case "BRANDY" -> 10;
+            case "WHISKEY" -> 14;
+		    default -> 0;
+    	};
+    	
+    	System.out.println(this.getName() + ": That was a nice glass of " + objName);
     }
 }

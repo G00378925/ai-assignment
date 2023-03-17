@@ -1,0 +1,98 @@
+(* Mamdani Inference *)
+FUNCTION_BLOCK dragon
+    VAR_INPUT
+        (* The attack value of the player. *)
+        attack : REAL;
+        (* The current health level of the player. *)
+        opponentHealth : REAL;
+        (* The BAC of the Dragon. *)
+        bloodAlcoholLevel : REAL;
+    END_VAR
+
+    VAR_OUTPUT
+        (* This is the attack response of the Dragon. *)
+        attackResponse : REAL;
+    END_VAR
+    
+    (* These are tiers of attack from the player. *)
+    (* The triangles overlap each other by 5, *)
+    (* to create a gradual shift between them. *)
+    FUZZIFY attack
+        TERM weak := trian -5 12.5 30;
+        TERM medium := trian 20 37.5 55;
+        TERM strong := trian 45 62.5 80;
+        TERM powerful := trian 70 87.5 105;
+    END_FUZZIFY
+    
+    (* These are the levels of health of the player. *)
+    (* Overlapping for the same reason in the above fuzzy set. *)
+    FUZZIFY opponentHealth
+        (* Injured and wounded take up a considerable amount of space *)
+        (* 0 equates to death, for the player *)
+        TERM injured := (0, 0) (20, 1) (40, 0);
+        TERM wounded := trian 30 50 70;
+        TERM hurt := trian 60 72.5 85;
+        TERM bruised := trian 77.5 87.5 97.5;
+        (* Notice healthy is very small, *)
+        (* this allows the health level to *)
+        (* go straight to bruised upon contact. *)
+        TERM healthy := (95, 0) (100, 1) (100, 1);
+    END_FUZZIFY
+    
+    FUZZIFY bloodAlcoholLevel
+        (* Doesn't take much alcohol for the Dragon, *)
+        (* to get from sober to buzzed. *)
+        TERM sober := (0, 1) (5, 1) (20, 0);
+        TERM buzzed := trian 10 25 40;
+        TERM drunk := trian 30 45 60;
+        (* Anything beyond this point is plastered. *)
+        TERM plastered := (50, 0) (75, 1) (100, 1);
+    END_FUZZIFY
+    
+    (* This fuzzy set, is the same as the input attack, *)
+    (* but will be the Dragons attack response. *)
+    DEFUZZIFY attackResponse
+        TERM weak := trian -5 12.5 30;
+        TERM medium := trian 20 37.5 55;
+        TERM strong := trian 45 62.5 80;
+        TERM powerful := trian 70 87.5 105;
+
+        (* Using COG defuzzifier because its good for *)
+        (* membership functions with a gradual change between them. *)
+        METHOD : COG;
+        DEFAULT := 50;
+    END_DEFUZZIFY
+    
+    RULEBLOCK No1
+        AND : MIN;
+        ACT : MIN;
+        ACCU : MAX;
+        OR : MAX;
+
+        (* If the Dragon is plastered, the attack response will be weak no matter what. *)
+        (* Or if the player's health is injured, use a weak attack as well. *)
+        RULE 1 : IF bloodAlcoholLevel IS plastered OR opponentHealth IS injured
+        THEN attackResponse IS weak;
+
+        (* Being buzzed will make the Dragon significantly stronger. *)
+        (* Make sure the player isn't injured or bruised or hurt. *)
+        (* For strong and powerful attacks from the player. *)
+        RULE 2 : IF bloodAlcoholLevel IS buzzed AND attack IS strong OR attack IS powerful
+        AND opponentHealth IS NOT injured AND opponentHealth IS NOT bruised AND opponentHealth IS NOT hurt
+        THEN attackResponse IS powerful;
+
+        (* Being drunk will reduce the Dragon's performance slightly, only allowing medium attacks. *)
+        RULE 3 : IF bloodAlcoholLevel IS drunk AND attack IS strong OR attack IS powerful
+        AND opponentHealth IS NOT injured THEN attackResponse IS medium;
+
+        (* If the Dragon is sober and the attack is weak or the health is injured, use a weak attack. *)
+        RULE 4 : IF bloodAlcoholLevel IS sober AND attack IS weak OR opponentHealth IS injured
+        THEN attackResponse IS weak;
+        
+        (* If the Dragon is sober and the attack is powerful, *)
+        (* then the response attack will be strong. *)
+        (* Dragon's need to be buzzed to unleash their full potential. *)
+        RULE 5 : IF bloodAlcoholLevel IS sober AND attack IS powerful
+        THEN attackResponse IS strong;
+    END_RULEBLOCK
+END_FUNCTION_BLOCK

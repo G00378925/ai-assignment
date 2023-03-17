@@ -67,7 +67,7 @@ public class Troll extends GameCharacterNN implements GameCharacterable {
     
     public void fight(Weapon weapon, Player opponent) {
         this.causeDamage(weapon.getAttackPoints(), opponent);
-        if (!this.isAlive()) return; // Check if the troll is alive
+        if (!this.isAlive()) return; // Check if the Troll is alive
         
         double weaponInput[] = getWeaponInput(weapon);
         // Normalise the weapon values between -1 and 1

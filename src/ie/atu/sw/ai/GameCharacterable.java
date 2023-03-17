@@ -6,5 +6,5 @@ public interface GameCharacterable {
 
     public void fight(Weapon weapon, Player opponent);
 
-    public void pour(String objName);
+    public void pour(String objName, Player opponent);
 }

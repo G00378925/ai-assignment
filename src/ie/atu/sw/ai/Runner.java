@@ -27,10 +27,12 @@ public class Runner {
                 Location randomLocation = (Location) this.locations.toArray()[randomLocationIndex];
                 
                 // Fetch random character instance
-                GameCharacterable character = switch (new Random().nextInt(3)) {
-                    case 0 -> new Goblin(randomLocation);
-                    case 1 -> new Imp(randomLocation);
-                    case 2 -> new Troll(randomLocation);
+                GameCharacterable character = switch (new Random().nextInt(5)) {
+                    case 0 -> new Dragon(randomLocation);
+                    case 1 -> new Goblin(randomLocation);
+                    case 2 -> new Imp(randomLocation);
+                    case 3 -> new Orc(randomLocation);
+                    case 4 -> new Troll(randomLocation);
                     default -> null;
                 };
                 
@@ -52,6 +54,7 @@ public class Runner {
         // Generate the training data and load in the neural networks.
         GenerateTrainingData.generateTrainingData("./resources/neural/");
         Menu.loadNeuralNetworks(FORCE_RETRAIN_ON_START);
+        Menu.loadFuzzyLogic();
         
         // Generate the location graph, add player to middle of the graph
         Location location = Location.setupLocationGraph(MAX_DEPTH, this.locations);

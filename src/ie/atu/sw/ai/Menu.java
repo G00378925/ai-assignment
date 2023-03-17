@@ -15,6 +15,11 @@ public class Menu {
         }
     }
     
+    public static void loadFuzzyLogic() {
+        Dragon.loadFuzzyLogic();
+        Orc.loadFuzzyLogic();
+    }
+    
     public void validateNeuralNetworks() {
         Goblin.validate();
         Imp.validate();
@@ -128,18 +133,22 @@ public class Menu {
                     player.look();
                     break;
                 }
-                case "TRAIN": {
-                    if (input.length < 2)
-                        loadNeuralNetworks(true);
-                    else
-                        this.train(input[1]);
-                    break;
-                }
                 case "TELL": {
                     if (input.length < 4)
                         System.err.println("Correct syntax: TELL ENEMY_NAME POUR ALE");
                     else
                         player.tell(input);
+                    break;
+                }
+                case "INVENTORY": {
+                    player.inventory();
+                    break;
+                }
+                case "TRAIN": {
+                    if (input.length < 2)
+                        loadNeuralNetworks(true);
+                    else
+                        this.train(input[1]);
                     break;
                 }
                 case "VALIDATE": {

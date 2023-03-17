@@ -17,350 +17,101 @@
         <h1>Declan Kelly - G00378925</h1>
     </center>
 
-    <!-- <h1>1. Fuzzy Logic</h1> -->
-
-    <h1>Neural Network</h1>
-    I have implemented 3 characters: <span>Goblin</span>, <span>Imp</span> and the <span>Troll</span>.
-    Each one is implemented in its own class. The neural network code is implemented statically,
-    allowing multiple instances of each character without having to retrain each instance.
-    <br><br>
-
-    The purpose of the neural networks is to determine the attack values of the characters, using the weapon attributes has input.
-    Using the command: <span style="color: red">FIGHT GOBLIN WITH WEAPON_NAME</span>, you can fight a character.
-    You must make sure you have a weapon first, check the current location weapons using <span style="color: red">LOOK</span>.
-    Find a weapon that is listed as present, use the <span style="color: red">GET WEAPON_NAME</span> to retrieve it.
-    If an enemy character isn't at your current location, move to other locations using
-    <span style="color: red">WEST</span>, <span style="color: red">NORTH</span> . . .
-    (the current enemies at that location, are shown before the prompt symbol <span>></span>.
-    <br><br>
-
-    When running the game, you can use the command <span style="color: red">TRAIN</span> to train all the neural networks
-    or <span style="color: red">TRAIN ENEMY_NAME</span> to train a specific character.
-    Trained neural networks are automatically saved to the <span>./resources/neural</span> directory.
-
-    Adjusting the variable <span>FORCE_RETRAIN_ON_START</span> in the Runner, will force the NNs to be trained automatically on the start of the game,
-    or disable it, allowing you to load pretrained NNs.
-    <br><br>
-
-    The <span>GenerateTrainingData</span> class generates training data for each character and stores it in
-    <span>./resources/neural</span> as a <span>*.csv</span>.
-    (This automatically happens upon starting the game).
-    Neural networks can become too familiar with the training data, so I'm also generating some validation data
-    that the neural networks haven't seen. This is put in the same directory as the training data.
-    You can test the validation data on all characters using the <span style="color: red">VALIDATE</span> command,
-    or on a specific character using <span style="color: red">VALIDATE ENEMY_NAME</span>.
-    <br><br>
-
-    Each character has a tolerance range of error when checking the validation data,
-    <span>Goblin: 2</span>,
-    <span>Troll: 0.08</span> and the <span>Imp</span> is absolute integer checking.
-
-    I'm using this as a metric to determine the best loss function to use for the regression characters (<span>Goblin</span> and <span>Troll</span>).
-    I've had success with the MAE for the Goblin and the MSE for the Troll.
-    <br><br>
-
-    For each of the NNs, I've used the smallest hidden layer sizes possible that perform well with the validation data.
-    This will help reduce training time. The ranges of the validation data is the same as the training data,
-    but the only difference is that input values are randomly generated.
-    <br><br>
-
-    <br><br><br><br><br><br><br><br><br><br><br>
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <h2>1. Goblin</h2>
-    Type: <strong>Regression</strong><br>
-    <center><img src="goblin.svg" width="75%"></img></center>
-    <br><br>
-
-    <strong>Inputs:</strong> 0. Attack, 1. Defense
-    &nbsp&nbsp&nbsp&nbsp
-    <strong>Outputs:</strong> 0. Damage
-    &nbsp&nbsp&nbsp&nbsp
-    <strong>Loss:</strong> MAE
-    <br><br>
-
-    <strong>Input Layer:</strong>  <i>Size:</i> 2<br>
-    <strong>Hidden Layer:</strong> <i>Activation:</i> ReLU&nbsp&nbsp&nbsp&nbsp<i>Size:</i> 6<br>
-    <strong>Output Layer:</strong> <i>Activation:</i> Linear&nbsp&nbsp&nbsp&nbsp<i>Size:</i> 1
-    <br><br>
-
-    The purpose of this NN is to learn the function below (The <span>Imp</span> and the <span>Troll</span> are also learning functions).
-    The goblin needs to calculate its response attack (outputting a value),
-    it will need to factor in the defence of the weapon, and goblins are 25% weaker than the player.
-    <br><br>
-
-    <span>private static final BiFunction&lt;Double, Double, Double&gt; goblinAttack = <br>
-    &nbsp&nbsp&nbsp&nbsp(attack, defence) -&gt; ((attack + defence) * 0.75);</span>
-    <br><br>
-
-    The NN struggled with the validation data, until I normalised the input values,
-    I normalised them between <span>0</span> and <span>1</span>.
-    I used ReLU because its quick, and it fit the problem, being regression.
-    <br><br>
-
-    Deciding on a loss function, based on the amount of epochs it took to train, was a bad metric;
-    as I've said above, generating correct values for unseen data is more favorable,
-    plus you only have to train a network once, so epoch count shouldn't be taken into account.
-
-    The epoch counts in the table below are very volatile because the length of time it takes to train an NN
-    is determined by the initial random weights. I settled on MAE because it had the lowest error count for the validation data.
-    <br><br>
-
-    <table>
-        <tr>
-            <th width="5%">Loss</th>
-            <th>Attempt 1 - Epochs</th>
-            <th>Attempt 2 - Epochs</th>
-            <th>Attempt 3 - Epochs</th>
-            <th>Mean Epochs</th>
-        </tr>
-        <tr>
-            <td>MAE</td>
-            <td>31351</td>
-            <td>37087</td>
-            <td>47648</td>
-            <td>38695</td>
-        </tr>
-        <tr>
-            <td>MSE</td>
-            <td>85</td>
-            <td>10197</td>
-            <td>95</td>
-            <td>3459</td>
-        </tr>
-        <tr>
-            <td>SSE</td>
-            <td>94</td>
-            <td>16394</td>
-            <td>89</td>
-            <td>5525</td>
-        </tr>
-    </table>
-
-    <br><strong>Training Data:</strong><br>
-    0. Input Attack: <span>n >= 0</span> and <span>n <= 100</span><br>
-    1. Input Defence: <span>n >= 0</span> and <span>n <= 100</span><br>
+    <h2>0. Threads</h2>
+    There is five enemies in the game, each of them inherit the <span>GameCharacter</span> class,
+    this class implements <span>Runnable</span> interface.
+    In the <span>Runner</span> class, the enemies are spawned in and added to the <span>ExecutorService</span> pool.<br>
     <br>
-    Output Damage: <span>n >= 0</span> and <span>n <= 150</span><br>
-    <br>
+    This runs the <span>run</span> method in the <span>GameCharacter</span>,
+    this runs a loop until the enemy is executed, enemies are spawned in random locations across the graph.
+    They want to find where the player is and will randomly traverse the graph until they find the player and loiter at that location.
 
-    The code below is used to produce the training data.
-    It iterates through the possible input values of attack and defence in steps of <span>5</span>.<br>
-    <span>
-    for (double attack = 0; attack <= 100; attack += 5) {<br>
-    &nbsp&nbsp&nbsp&nbspfor (double defence = 0; defence <= 100; defence += 5) {<br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdouble output = goblinAttack.apply(attack, defence);<br><br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsppw.printf("%.0f, %.0f, %.2f\n",<br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspattack, defence, output);<br>
-    &nbsp&nbsp&nbsp&nbsp}<br>
-    }<br>
-    </span>
-
-    <br>Here is a sample of the generated training data (only showing first 10 records) (<span>goblin_training.csv</span>):<br>
-    <span>
-    # 1. Attack, 2. Defence, 3. Output<br>
-    0, 0, 0.00<br>
-    0, 10, 7.50<br>
-    0, 20, 15.00<br>
-    0, 30, 22.50<br>
-    0, 40, 30.00<br>
-    0, 50, 37.50<br>
-    0, 60, 45.00<br>
-    0, 70, 52.50<br>
-    0, 80, 60.00<br>
-    0, 90, 67.50<br>
-    0, 100, 75.00<br>
-    ...<br>
-    </span>
-
-    <br><strong>Validation Data:</strong><br>
-    To produce the validation data I randomly generated values in the range of the attack and defence,
-    and put them into the <span>goblinAttack</span> function and noted the output,
-    this is done <span>100</span> times.
-    Validation data for the <span>Imp</span> and <span>Troll</span> is generated using the same technique.
-    <br><br>
-
-
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <h2>2. Imp</h2>
-    Type: <strong>Classification</strong><br>
-    <center><img src="imp.svg" width="75%"></img></center>
-    <br><br>
-
-    <strong>Inputs:</strong> 0. Attack, 1. Defense
-    &nbsp&nbsp&nbsp&nbsp
-    <strong>Output:</strong> 0. One Hot Vector
-    &nbsp&nbsp&nbsp&nbsp
-    <strong>Loss:</strong> CEE
-    <br><br>
-
-    <strong>Input Layer:</strong>  <i>Size:</i> 2<br>
-    <strong>Hidden Layer:</strong> <i>Activation:</i> Leaky ReLU&nbsp&nbsp&nbsp&nbsp<i>Size:</i> 4<br>
-    <strong>Output Layer:</strong> <i>Activation:</i> Linear&nbsp&nbsp&nbsp&nbsp<i>Size:</i> 4
-    <br><br>
-
-    The purpose of this NN is to learn the function below, where the attack and defence of the weapon are added together,
-    minimum possible value is <span>0</span> and the maximum is <span>200</span>.
-    This value is divided by <span>50</span>, and the floor division can have <span>4</span> possible
-    values (<span>0</span>, <span>1</span>, <span>2</span> and <span>3</span>).
-    Each of these values equates to a tier of attack from the Imp.
-    These values being <span>{12.5, 25, 37.5, 50}</span>, the output of the NN will be the index.
-    <br><br>
-
-    <span>private static final BiFunction&lt;Double, Double, Double&gt; impAttack = <br>
-    &nbsp&nbsp&nbsp&nbsp(attack, defence) -&gt; Math.floor((attack + defence) / 50);</span>
-    <br><br>
-
-    I found success normalising the input between <span>-1</span> and <span>0</span>, leading to better matches with the validation data.
-    I then had to use Leaky ReLU to avoid the dead ReLU problem, due to the input having negative values.
-    Aicme4J automatically applies softmax on the output layer, returning the index of highest value, the Imp will now use that attack tier on the player.
-    <br><br>
-
-    The outputs of the function <span>impAttack</span> above, need to be converted to one hot vectors,
-    I made a method in the <span>Imp</span> called <span>genOneHotVector</span> that can do this.
-    <br><br>
-
-    <span>
-    0 => {1, 0, 0, 0}<br>
-    1 => {0, 1, 0, 0}<br>
-    2 => {0, 0, 1, 0}<br>
-    3 => {0, 0, 0, 1}<br>
-    </span>
-    <br>
-
-    I used the CEE loss function as it was the only loss function in Aicme4J that was most appropriate for classification.
-    <br><br>
-
-    <strong>Training/Validation Data:</strong><br>
-    The training/validation data generated the same way as the Goblin,
-    only difference is the function it calls being <span>impAttack</span>,
-    this returns an index, that will be turned into one hot vectors during training.
-    <br><br>
-
-    First 10 records of the generated training data (<span>imp_training.csv</span>):<br>
-    <span>
-    # 1. Attack, 2. Defence, 3. Output Index<br>
-    0, 0, 0<br>
-    0, 10, 0<br>
-    0, 20, 0<br>
-    0, 30, 0<br>
-    0, 40, 0<br>
-    0, 50, 1<br>
-    0, 60, 1<br>
-    0, 70, 1<br>
-    0, 80, 1<br>
-    0, 90, 1<br>
-    ...<br>
-    </span>
-   
-    <br><br><br><br><br><br>
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
-    <h2>3. Troll</h2>
-    Type: <strong>Regression</strong><br>
-    <center><img src="troll.svg" width="75%"></img></center>
-    <br><br>
-
-    <strong>Inputs:</strong> 0. Attack, 1. Sharp
-    &nbsp&nbsp&nbsp&nbsp
-    <strong>Outputs:</strong> 0. Punch Damage, 1. Kick Damage
-    &nbsp&nbsp&nbsp&nbsp
-    <strong>Loss:</strong> MSE
-    <br><br>
-
-    <strong>Input Layer:</strong>  <i>Size:</i> 2<br>
-    <strong>Hidden Layer 0:</strong> <i>Activation:</i> ReLU&nbsp&nbsp&nbsp&nbsp<i>Size:</i> 6<br>
-    <strong>Hidden Layer 1:</strong> <i>Activation:</i> Hyperbolic Tangent&nbsp&nbsp&nbsp&nbsp<i>Size:</i> 4<br>
-    <strong>Output Layer:</strong> <i>Activation:</i> Linear&nbsp&nbsp&nbsp&nbsp<i>Size:</i> 2
-    <br><br>
-
-    This NN will be learning two functions unlike the two above,
-    with the output of the first going into index <span>0</span> of the output layer (Troll punch),
-    and the second function's output going into index two (Troll kick).
-    These are two features, and this is a more complex problem requiring an additional hidden layer.
-    <br><br>
-
-    <span>BiFunction&lt;Double, Boolean, Double&gt; trollAttackPunch =<br>
-    &nbsp&nbsp&nbsp&nbsp(attack, sharp) -&gt; (attack * (sharp ? 0.2 : 0.3));<br>
-    BiFunction&lt;Double, Boolean, Double&gt; trollAttackKick =<br>
-    &nbsp&nbsp&nbsp&nbsp(attack, sharp) -&gt; (attack * 0.3) * (sharp ? 1.25 : 1)</span>
-    <br><br>
-
-    The input data and the output data are both normalised between <span>-1</span> and <span>1</span>,
-    this means the two outputs of the NN, will need to be denormalised,
-    I am doing this with the <span>denormalise</span> function in the <span>Troll</span> class.
-    I found scaling between <span>-1</span> and <span>1</span> led to less errors when checking validation data.
-
-    Unlike the Goblin this is two value output regression. <span>NeuralNetwork.process</span> only returns one value,
-    so I am using the <span>NeuralNetwork.getOutputLayer()</span> to extract the two values.
-    <br><br>
-
-    I've tried swapping the positions of each of the activator functions, and found this configuration works best.
-    The tanh is a non-linear function, this is useful in learning complex problems like this one.
-    <br><br>
-
-    <strong>Training Data:</strong><br>
-    0. Input Attack: <span>n >= 0</span> and <span>n <= 100</span><br>
-    1. Input Sharp: <span>{0, 1}</span><br>
-    <br>
-    0. Output Punch Damage: <span>n >= 0</span> and <span>n <= 30</span><br>
-    1. Output Kick Damage: <span>n >= 0</span> and <span>n <= 37.5</span><br>
-    <br>
-
-    This is the code used to produce the training data.
-    Similar to the previous enemies above,
-    this is generating the possible inputs/outputs by iterating through the range of the inputs.
-    Notice steps of <span>2</span> this time for attack, this is due to the complexity of the problem, which requires more training data.
-    Sharp is a boolean value, being true or false.
-    <br>
-    <span>
-    for (double attack = 0; attack <= 100; attack += 2) {<br>
-    &nbsp&nbsp&nbsp&nbspfor (int sharp = 0; sharp <= 1; sharp++) {<br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdouble resultPunch = <br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsptrollAttackPunch.apply(attack, sharp == 1);<br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdouble resultKick = <br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsptrollAttackKick.apply(attack, sharp == 1);<br><br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsppw.printf("%.0f, %d, %.2f, %.2f\n",<br>
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspattack, sharp, resultPunch, resultKick);<br>
-    &nbsp&nbsp&nbsp&nbsp}<br>
-    }<br>
-    </span>
-    <br>
-
-    First 10 records of the generated training data (<span>troll_training.csv</span>):<br>
-    <span>
-    # 1. Attack, 2. Sharp, 3. Output Punch, 4. Output Kick<br>
-    0, 0, 0.00, 0.00<br>
-    0, 1, 0.00, 0.00<br>
-    2, 0, 0.60, 0.60<br>
-    2, 1, 0.40, 0.75<br>
-    4, 0, 1.20, 1.20<br>
-    4, 1, 0.80, 1.50<br>
-    6, 0, 1.80, 1.80<br>
-    6, 1, 1.20, 2.25<br>
-    8, 0, 2.40, 2.40<br>
-    8, 1, 1.60, 3.00<br>
-    ...<br>
-    </span>
-
-    <!--
-    <h1>3. Semantic Network and Grammar Set</h2>
+    <h2>1. Semantic Network and Grammar Set</h2>
 
     <table style="border-style: solid; border-width: 1px;">
-        <th>
-            <td>Verb / Command</td>
-        </th>
         <tr>
-            <td>VALIDATE</td>
+            <th>Verb / Command</th>
+            <th>Parameter(s)</th>
+            <th>Description</th>
+        </tr>
+        <!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- -->
+        <tr>
+            <td><span>LOOK</span></td>
+            <td>-</td>
+            <td>Will give you a description of the current location, listing all the enemies,
+            items and weapons currently there.</td>
+        </tr>
+        <tr>
+            <td><span>GET</span></td>
+            <td><span style="color: purple">ITEM_NAME</span></td>
+            <td>Retrieve an item/weapon by name that is at the current location.</td>
+        </tr>
+        <tr>
+            <td><span>FIGHT</span></td>
+            <td><span style="color: purple">ENEMY_NAME</span> <span>WITH</span> <span style="color: purple">WEAPON_NAME</span></td>
+            <td>Fight an enemy that is at the current location, using a weapon that is in your inventory.</td>
+        </tr>
+        <tr>
+            <td><span>EAT</span></td>
+            <td><span style="color: purple">ITEM_NAME</span></td>
+            <td>Eat an item that is currently in your inventory, Example: <span>EAT</span> <span style="color: purple">APPLE</span>.</td>
+        </tr>
+        <tr>
+            <td><span>TELL</span></td>
+            <td><span style="color: purple">DRAGON</span> <span>POUR</span> <span style="color: purple">BEVERAGE_NAME</span></td>
+            <td>Request the dragon to pour a beverage, available beverages include: <span>ALE</span>, <span>BRANDY</span> and <span>WHISKEY</span>.</td>
+        </tr>
+        <!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- -->
+        <tr>
+            <td><span>INVENTORY</span></td>
+            <td>-</td>
+            <td>List the items and weapons inside the players inventory.</td>
+        </tr>
+        <tr>
+            <td><span>TRAIN</span></td>
+            <td style="color: purple"><span>ENEMY_NAME</span></td>
+            <td>Train the neural networks, use <span>TRAIN</span> to train all NNs,
+            and <span>TRAIN</span> <span style="color: purple">ENEMY_NAME</span> to train a specific NN.</td>
+        </tr>
+        <tr>
+            <td><span>VALIDATE</span></td>
+            <td style="color: purple"><span>ENEMY_NAME</span></td>
+            <td>Test the validation data on the neural networks, use <span>VALIDATE</span> to test all NNs,
+            and <span>VALIDATE</span> <span style="color: purple">ENEMY_NAME</span> to validate a specific NN.</td>
+        </tr>
+        <tr>
+            <td style="color: blue"><span>NORTH</span></td>
+            <td style="color: purple">-</td>
+            <td>Move the player to the location <span>NORTH</span> of the current location.</td>
+        </tr>
+        <tr>
+            <td style="color: blue"><span>SOUTH</span></td>
+            <td style="color: purple">-</td>
+            <td>Move the player to the location <span>SOUTH</span> of the current location.</td>
+        </tr>
+        <tr>
+            <td style="color: blue"><span>EAST</span></td>
+            <td style="color: purple">-</td>
+            <td>Move the player to the location <span>EAST</span> of the current location.</td>
+        </tr>
+        <tr>
+            <td style="color: blue"><span>WEST</span></td>
+            <td style="color: purple">-</td>
+            <td>Move the player to the location <span>WEST</span> of the current location.</td>
         </tr>
     </table>
-    -->
+    <br>
+    The commands in blue are used for moving in different directions, these commands don't expect any parameters.
+
+    <h2>2. Fuzzy Logic</h2>
+    FCL_HTML
+
+    <h2>3. Neural Network</h2>
+    NEURAL_NETWORK_HTML
 </body>
-</html>

@@ -75,8 +75,9 @@ public abstract class GameCharacter implements Runnable {
         }
     }
 
-    public void pour(String objName) {
+    public void pour(String objName, Player opponent) {
         System.err.printf("I don't have any %s.\n", objName);
+        System.err.println("But, I know the dragon might have some ALE.");
     }
     
     public String toString() {

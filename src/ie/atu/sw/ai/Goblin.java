@@ -58,7 +58,7 @@ public class Goblin extends GameCharacterNN implements GameCharacterable {
     
     public void fight(Weapon weapon, Player opponent) {
         this.causeDamage(weapon.getAttackPoints(), opponent);
-        if (!this.isAlive()) return;
+        if (!this.isAlive()) return; // Check if the Goblin is alive
         
         if (this.getHealth() > 0) {
             double[] input = getWeaponInput(weapon);

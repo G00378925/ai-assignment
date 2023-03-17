@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>G00378925</title>
+    </head>
+    <body>
+        <style>
+            * {
+            font-family: Arial;
+            }
+            span {
+            font-family: Courier New;
+            }
+        </style>
+        <center>
+            <h1>G00378925 - Declan Kelly</h1>
+        </center>
+        <h1>Fuzzy Logic</h1>
+        I have implemented 2 characters: <span>Dragon</span> and the <span>Orc</span> using Fuzzy Logic.
+        Both of the characters statically encapsulate the <span>fis</span> object.
+        Allowing multiple instances of the characters to share the same inference system.<br>
+        <br>
+        The code for each of the characters can be found in the <span>Dragon.java</span> and <span>Orc.java</span>.<br>
+        Like the characters that use the neural network, when you fight the character with a weapon, it calls the <span>fight</span> method of the enemy.
+        Some parameters are passed to the <span>fis</span> object, and the output being the <span>attackResponse</span>
+        is then deducted from the player's health.
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <h2>1. Dragon</h2>
+        Type: <strong>Mamdani</strong><br>
+        FCL: <span>./resources/fuzzy/dragon.fcl</span><br>
+        <br>
+        For the <strong>Dragon</strong>, I'm using <strong>Mamadani</strong> inference, as seen in the FCL file,
+        the defuzzification is using non-linear functions, being the triangular membership functions.
+        It will be taking in three outputs and emmitting one output.<br>
+        <br>
+        The inputs are the following: <span>attack</span>, <span>opponentHealth</span> and <span>bloodAlcoholLevel</span>.<br>
+        And the output being the attack response of the Dragon (<span>attackResponse</span>).<br>
+        <br>
+        I am using the <strong>Center of Gravity</strong> (COG) defuzzifier, because its good at modelling nuanced relationships,
+        between the fuzzy sets.
+        <h3>Fuzzy sets and membership functions</h3>
+        <center><img src="images/dragon_a.png"></center>
+        The attack comes in four different tiers (<strong>weak</strong>, <strong>medium</strong>,
+        <strong>strong</strong>, <strong>powerful</strong>),
+        each tier of size <span>30</span> with an overlap of <span>5</span> allowing a gradual fade into the next tier.
+        The universe of discourse is <span>-5</span> to <span>105</span>.
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <center><img src="images/dragon_oh.png"></center>
+        This is the current health of the player, with <span>100</span> being top health and being close to <span>0</span> is near death.<br>
+        <strong>Dragon</strong>'s are kind creatures, and do not want unnecessary pain or suffering.<br>
+        So the players health will be taken into account whilst determining the response attack.
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <center><img src="images/dragon_bac.png"></center>
+        The <span>bloodAlcoholLevel</span> is a measurement of drunkness of the <strong>Dragon</strong>,
+        each of the membership triangles overlap to model the transition between drunken states.
+        If the <strong>Dragon</strong> hasn't any alcohol 
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <center><img src="images/dragon_ar.png"></center>
+        This fuzzy set is no different to the input <span>attack</span>,
+        this is the tier of attack the <strong>Dragon</strong> responds with.
+        <h3>Fuzzy rules</h3>
+        <span>
+        <strong>(* If the Dragon is plastered, the attack response will be weak no matter what. *)<br>
+        (* Or if the player's health is injured, use a weak attack as well. *)</strong><br>
+        RULE 1 : IF bloodAlcoholLevel IS plastered OR opponentHealth IS injured<br>
+        THEN attackResponse IS weak;<br>
+        <br>
+        <strong>(* Being buzzed will make the Dragon significantly stronger. *)<br>
+        (* Make sure the player isn't injured or bruised or hurt. *)<br>
+        (* For strong and powerful attacks from the player. *)</strong><br>
+        RULE 2 : IF bloodAlcoholLevel IS buzzed AND attack IS strong OR attack IS powerful<br>
+        AND opponentHealth IS NOT injured AND opponentHealth IS NOT bruised AND opponentHealth IS NOT hurt<br>
+        THEN attackResponse IS powerful;<br>
+        <br>
+        <strong>(* Being drunk will reduce the Dragon's performance slightly, only allowing medium attacks. *)</strong><br>
+        RULE 3 : IF bloodAlcoholLevel IS drunk AND attack IS strong OR attack IS powerful<br>
+        AND opponentHealth IS NOT injured THEN attackResponse IS medium;<br>
+        <br>
+        <strong>(* If the Dragon is sober and the attack is weak or the health is injured, use a weak attack. *)</strong><br>
+        RULE 4 : IF bloodAlcoholLevel IS sober AND attack IS weak OR opponentHealth IS injured<br>
+        THEN attackResponse IS weak;<br>
+        <br>
+        <strong>(* If the Dragon is sober and the attack is powerful, *)<br>
+        (* then the response attack will be strong. *)<br>
+        (* Dragon's need to be buzzed to unleash their full potential. *)</strong><br>
+        RULE 5 : IF bloodAlcoholLevel IS sober AND attack IS powerful<br>
+        THEN attackResponse IS strong;<br>
+        </span>
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <h2>2. Orc</h2>
+        Type: <strong>Sugeno</strong><br>
+        FCL: <span>./resources/fuzzy/orc.fcl</span><br>
+        <br>
+        For the <strong>Orc</strong>, I'm using <strong>Sugeno</strong> interference, as seen in the membership functions and the diagrams below,
+        they are all linear.<br>
+        <br>
+        The inputs are the following: <span>trainingLevel</span> and <span>attack</span>.<br>
+        And the output being the attack response of the Orc (<span>attackResponse</span>).<br>
+        <br>
+        I am using the <strong>Center of Gravity Singleton</strong> (COGS) defuzzifier,
+        because it works best with linear membership functions, defined by a single point (<strong>Sugeno</strong>).
+        <h3>Fuzzy sets and membership functions</h3>
+        <center><img src="images/orc_tl.png"></center>
+        This fuzzy set is used to determine if the <strong>Orc</strong> is a novice (<span>50</span> hours), intermediate or an expert at attacking.
+        With some practice in most crafts, an Orc can learn enough to be dangerous with some practice (<span>1,000</span> hours) (<strong>intermediate</strong>),
+        but to be a true <strong>expert</strong>, you need <span>10,000</span> hours.<br>
+        <br>
+        An observation I have made is that the lack of shapes such as triangles,
+        make it difficult to model the learning curve.
+        A gaussian might be more appropriate here, but I can't since I'm using <strong>Sugeno</strong> for the <strong>Orc</strong>.
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <center><img src="images/orc_a.png"></center>
+        This fuzzy set is very similar to the input <span>attack</span> in the <strong>Dragon</strong> above,
+        the difference being, its use of linear membership functions.
+        <!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->
+        <center><img src="images/orc_ar.png"></center>
+        <h3>Fuzzy rules</h3>
+        <span>
+        <strong>(* If the Orc is a novice, then all their attacks will be weak, *)<br>
+        (* no matter the attack of the player. *)</strong><br>
+        RULE 1 : IF trainingLevel IS novice THEN attackResponse IS weak;<br>
+        <br>
+        <strong>(* If the player's attack is weak or medium and the Orc is an expert, *)<br>
+        (* Use a medium response attack. *)</strong><br>
+        RULE 2 : IF attack IS weak OR attack IS medium AND<br>
+        trainingLevel IS expert THEN attackResponse IS medium;<br>
+        <br>
+        <strong>(* If the Orc is of intermediate level and the attack is medium, *)<br>
+        (* send back a medium level of attack. *)</strong><br>
+        RULE 3 : IF trainingLevel IS intermediate AND attack IS medium<br>
+        THEN attackResponse IS medium;<br>
+        <br>
+        <strong>(* Same as above, but with strong. *)</strong><br>
+        RULE 4 : IF trainingLevel IS intermediate AND attack IS strong<br>
+        THEN attackResponse IS strong;<br>
+        <br>
+        <strong>(* If the Orc is an expert and the players attack powerful, respond with powerful. *)</strong><br>
+        RULE 5: IF trainingLevel IS expert AND attack IS powerful<br>
+        THEN attackResponse IS powerful;<br>
+        </span>
+    </body>
+</html>
