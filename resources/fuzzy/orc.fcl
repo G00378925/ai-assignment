@@ -6,7 +6,7 @@ FUNCTION_BLOCK orc
         (* The attack value of the opponent/player. *)
         attack : REAL;
     END_VAR
-    
+
     VAR_OUTPUT
         (* This is the attack response of the Orc. *)
         attackResponse : REAL;
@@ -36,14 +36,14 @@ FUNCTION_BLOCK orc
         TERM medium := 40;
         TERM strong := 60;
         TERM powerful := 80;
-        
+
         (* COGS is COG but for Singleton functions. *)
         METHOD : COGS;
-        
+
         (* Using 50 as the default, because it is 100 / 2. *)
         DEFAULT := 50;
     END_DEFUZZIFY
-    
+
     RULEBLOCK No1
         AND : MIN;
         ACT : MIN;
@@ -54,22 +54,20 @@ FUNCTION_BLOCK orc
         (* no matter the attack of the player. *)
         RULE 1 : IF trainingLevel IS novice THEN attackResponse IS weak;
 
-        (* If the player's attack is weak or medium and the Orc is an expert, *)
+        (* If the player's attack is weak and Orc is an expert, *)
         (* Use a medium response attack. *)
-        RULE 2 : IF attack IS weak OR attack IS medium AND
-        trainingLevel IS expert THEN attackResponse IS medium;
-
-        (* If the Orc is of intermediate level and the attack is medium, *)
-        (* send back a medium level of attack. *)
-        RULE 3 : IF trainingLevel IS intermediate AND attack IS medium
+        RULE 2 : IF trainingLevel IS expert AND attack IS weak
         THEN attackResponse IS medium;
 
-        (* Same as above, but with strong. *)
-        RULE 4 : IF trainingLevel IS intermediate AND attack IS strong
-        THEN attackResponse IS strong;
+        (* If the Orc is of intermediate level, send back a medium level of attack. *)
+        RULE 3 : IF trainingLevel IS intermediate THEN attackResponse IS medium;
 
         (* If the Orc is an expert and the players attack powerful, respond with powerful. *)
-        RULE 5: IF trainingLevel IS expert AND attack IS powerful
+        RULE 4: IF trainingLevel IS expert AND attack IS powerful
         THEN attackResponse IS powerful;
+
+        (* If the Orc is an expert and the attack isn't weak or powerful, then return strong attack *)
+        RULE 5 : IF trainingLevel IS expert AND attack IS NOT weak AND attack IS NOT powerful THEN
+        attackResponse IS strong;
     END_RULEBLOCK
 END_FUNCTION_BLOCK

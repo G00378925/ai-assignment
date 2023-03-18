@@ -13,7 +13,7 @@ FUNCTION_BLOCK dragon
         (* This is the attack response of the Dragon. *)
         attackResponse : REAL;
     END_VAR
-    
+
     (* These are tiers of attack from the player. *)
     (* The triangles overlap each other by 5, *)
     (* to create a gradual shift between them. *)
@@ -23,7 +23,7 @@ FUNCTION_BLOCK dragon
         TERM strong := trian 45 62.5 80;
         TERM powerful := trian 70 87.5 105;
     END_FUZZIFY
-    
+
     (* These are the levels of health of the player. *)
     (* Overlapping for the same reason in the above fuzzy set. *)
     FUZZIFY opponentHealth
@@ -38,7 +38,7 @@ FUNCTION_BLOCK dragon
         (* go straight to bruised upon contact. *)
         TERM healthy := (95, 0) (100, 1) (100, 1);
     END_FUZZIFY
-    
+
     FUZZIFY bloodAlcoholLevel
         (* Doesn't take much alcohol for the Dragon, *)
         (* to get from sober to buzzed. *)
@@ -48,7 +48,7 @@ FUNCTION_BLOCK dragon
         (* Anything beyond this point is plastered. *)
         TERM plastered := (50, 0) (75, 1) (100, 1);
     END_FUZZIFY
-    
+
     (* This fuzzy set, is the same as the input attack, *)
     (* but will be the Dragons attack response. *)
     DEFUZZIFY attackResponse
@@ -62,7 +62,7 @@ FUNCTION_BLOCK dragon
         METHOD : COG;
         DEFAULT := 50;
     END_DEFUZZIFY
-    
+
     RULEBLOCK No1
         AND : MIN;
         ACT : MIN;
@@ -88,11 +88,14 @@ FUNCTION_BLOCK dragon
         (* If the Dragon is sober and the attack is weak or the health is injured, use a weak attack. *)
         RULE 4 : IF bloodAlcoholLevel IS sober AND attack IS weak OR opponentHealth IS injured
         THEN attackResponse IS weak;
-        
+
         (* If the Dragon is sober and the attack is powerful, *)
         (* then the response attack will be strong. *)
         (* Dragon's need to be buzzed to unleash their full potential. *)
         RULE 5 : IF bloodAlcoholLevel IS sober AND attack IS powerful
         THEN attackResponse IS strong;
+
+        (* If the Dragon is sober and the attack isn't powerful, then Dragon will response with medium attack *)
+        RULE 6 : IF bloodAlcoholLevel IS sober AND attack IS NOT powerful THEN attackResponse IS medium;
     END_RULEBLOCK
 END_FUNCTION_BLOCK

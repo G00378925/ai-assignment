@@ -86,7 +86,7 @@ public class Location {
         };
     }
 
-    private static Location setupLocationGraph(int currentDepth, int maxDepth,
+	private static Location setupLocationGraph(int currentDepth, int maxDepth,
             Collection<Location> locations, String direction, Location previousLocation) {
         Location newLocation = new Location();
         locations.add(newLocation);
