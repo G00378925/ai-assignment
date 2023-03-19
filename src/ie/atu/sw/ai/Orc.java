@@ -1,6 +1,7 @@
 package ie.atu.sw.ai;
 
 import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 
 public class Orc extends GameCharacter implements GameCharacterable {
 	private static final String FCL_PATH = "./resources/fuzzy/orc.fcl";
@@ -16,9 +17,7 @@ public class Orc extends GameCharacter implements GameCharacterable {
 		super(location, "Orc", ConsoleColour.RED);
 
 		// Pick a random amount of hours trained.
-		// Sugeno doesn't play well with numbers between these :(
-		double[] possibleHoursTrained = { 0, 1000, 10_000 };
-		this.hoursTrained = possibleHoursTrained[(int) Math.floor(Math.random() * 3)];
+		this.hoursTrained = Math.random() * 10_000;
 	}
 
 	public void fight(Weapon weapon, Player opponent) {

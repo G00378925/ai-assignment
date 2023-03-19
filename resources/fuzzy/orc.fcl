@@ -15,22 +15,22 @@ FUNCTION_BLOCK orc
     (* The training level of the Orc is determined *)
     (* using the amount of hours the Orc has trained. *)
     FUZZIFY trainingLevel
-        TERM novice := 50;
-        TERM intermediate := 1000;
-        TERM expert := 10000;
+        TERM novice := (0, 0) (50, 1) (750, 0);
+        TERM intermediate := (500, 0) (1000, 1) (5000, 0);
+        TERM expert := (1250, 0) (10000, 1);
     END_FUZZIFY
 
     (* The attack comes in 4 tiers *)
     (* Weak covering 0 - 40 *)
     (* Medium covering 40 - 60 *)
     FUZZIFY attack
-        TERM weak := 20;
-        TERM medium := 40;
-        TERM strong := 60;
-        TERM powerful := 80;
+        TERM weak := trian -5 12.5 30;
+        TERM medium := trian 20 37.5 55;
+        TERM strong := trian 45 62.5 80;
+        TERM powerful := trian 70 87.5 105;
     END_FUZZIFY
 
-    (* Same as above, but for the output *)
+    (* Similar to the attack above, but using singleton membership functions *)
     DEFUZZIFY attackResponse
         TERM weak := 20;
         TERM medium := 40;
@@ -66,8 +66,8 @@ FUNCTION_BLOCK orc
         RULE 4: IF trainingLevel IS expert AND attack IS powerful
         THEN attackResponse IS powerful;
 
-        (* If the Orc is an expert and the attack isn't weak or powerful, then return strong attack *)
+        (* If the Orc is an expert and the attack isn't weak or powerful, then return medium attack *)
         RULE 5 : IF trainingLevel IS expert AND attack IS NOT weak AND attack IS NOT powerful THEN
-        attackResponse IS strong;
+        attackResponse IS medium;
     END_RULEBLOCK
 END_FUNCTION_BLOCK
